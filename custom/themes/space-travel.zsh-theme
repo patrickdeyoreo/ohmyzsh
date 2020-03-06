@@ -1,68 +1,84 @@
 # space-travel.zsh-theme
 
 zmodload zsh/terminfo
+
 () {
   local -i index
+  emulate -L zsh
   index=$(echoti colors)
   while ((index--)); do
     fg[$((index))]=$(echoti setaf "$((index))")
   done
 }
 
-function __shrink_path {
-  local retval=$?
-  setopt localoptions extendedglob noglobsubst promptpercent
-  local match mbegin mend
-  local prefix=${${(%)$(<<<%~)}%%/*}
-  local suffix=${${(%)$(<<<%~)}##$prefix(*/)#}
-  local middle=${${${(%)$(<<<%~)}/#%(#b)$prefix(*)$suffix/$match[1]}:W:/:s/#%(#b)(??)??##/$match[1]*}
-  print "$prefix$middle$suffix"
-  return "$retval"
-}
-
 function __git_prompt_info {
   local retval=$?
-  setopt localoptions promptbang promptpercent promptsubst
+  emulate -L zsh
+  () { return "$retval" }
   print -P "$(git_prompt_info; exit "$retval")"
   return "$retval"
 }
 
-#function __lolcat {
-#  local retval=$?
-#  setopt localoptions noglobsubst promptbang promptpercent promptsubst
-#  local res=''
-#  local str=${(%)1}
-#  local -a lolcat=(
-#    "$fg[154]" "$fg[148]" "$fg[184]" "$fg[178]" "$fg[214]" "$fg[208]"
-#    "$fg[209]" "$fg[203]" "$fg[204]" "$fg[198]" "$fg[199]" "$fg[163]"
-#    "$fg[164]" "$fg[128]" "$fg[129]" "$fg[93]"  "$fg[99]"  "$fg[63]"
-#    "$fg[69]"  "$fg[33]"  "$fg[39]"  "$fg[38]"  "$fg[44]"  "$fg[43]" 
-#    "$fg[49]"  "$fg[48]"  "$fg[84]"  "$fg[83]"  "$fg[119]" "$fg[118]"
-#  )
-#  local -i i=0
-#  local -i s=$2
-#  while ((i++ < $#str))
-#  do
-#    res+="%{$lolcat[(i + s) % $#lolcat]%}$str[i]"
-#  done
-#  print -P "$res%{$reset_color%}"
-#  return "$retval"
-#}
+function __virtualenv_prompt_info {
+  local retval=$?
+  emulate -L zsh
+  () { return "$retval" }
+  print -P "$(virtualenv_prompt_info; exit "$retval")"
+  return "$retval"
+}
 
-status_color='$fg[$(( $? ? ($? - 1) % 6 + 1 : 45 ))]'
+function __virtualenv_version_info {
+  local retval=$?
+  emulate -L zsh
+  local -A pyvenvcfg=("${(@)=${(@ps.\n.)$(< $VIRTUAL_ENV/pyvenv.cfg)}/ = / }")
+  print "$pyvenvcfg[version]"
+  return "$retval"
+}
 
-PROMPT='%{'"$status_color"'%}╒[%{$reset_color%}%15F%n%15f%{'"$status_color"'%}@%{$reset_color%}%15F%m%15f%{'"$status_color"'%}]═[%{$reset_color%}%15F%y%15f%{'"$status_color"'%}]═[%{$reset_color%}%15F$(__shrink_path)%15f%{'"$status_color"'%}]%{$reset_color%}$(__git_prompt_info)
-%{'"$status_color"'%}╘[%{$reset_color%}%(?.%(!.%15F#%15f.%15Fﬦ%15f).%15F%?%15f)%{'"$status_color"'%}]%{$reset_color%} '
+function __shrink_path {
+  local retval=$?
+  emulate -L zsh
+  setopt extendedglob promptpercent
+  local match mbegin mend
+  local prefix=${${(D)1-${(%)$(cat <<<%~)}}%%/*}
+  local suffix=${${(D)1-${(%)$(cat <<<%~)}}##$prefix(*/)#}
+  local middle=${${${(D)1-${(%)$(cat <<<%~)}}/#%(#b)$prefix(*)$suffix/$match[1]}:W:/:s/#%(#b)(??)??##/$match[1]*}
+  print "$prefix$middle$suffix"
+  return "$retval"
+}
 
-# PROMPT='%{'"$status_color"'%}╒[%{$reset_color%}$(__lolcat %n 12)%{'"$status_color"'%}@%{$reset_color%}$(__lolcat %m 15)%{'"$status_color"'%}]═[%{$reset_color%}$(__lolcat %y 23)%{'"$status_color"'%}]═[%{$reset_color%}$(__lolcat "$(__shrink_path)" 28)%{'"$status_color"'%}]%{$reset_color%}$(__git_prompt_info)
-# %{'"$status_color"'%}╘[%{$reset_color%}%(?.%(!.%15F#%15f.%15Fﬦ%15f).%15F%?%15f)%{'"$status_color"'%}]%{$reset_color%} '
+status_color='$fg[$(( $? ? ($? - 1) % 6 + 1 : 141 ))]'
 
+PROMPT='%{'"$status_color"'%}╒(%{'"$reset_color"'%}%121F%B%n%121f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%212F%B%m%212f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%117F%B$(__shrink_path)%117f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%228F%B%y%228f%b%{'"$status_color"'%})%{'"$reset_color"'%}$(__virtualenv_prompt_info)$(__git_prompt_info)
+%{'"$status_color"'%}╘(%{'"$reset_color"'%}%(?.%(!.%121F%B#%121f%b.%121F%Bﬦ%121f%b).%121F%B%?%121f%b)%{'"$status_color"'%})%{'"$reset_color"'%} '
+
+ZSH_THEME_GIT_PROMPT_CLEAN_ICON='%B%117F%117f%b'
+ZSH_THEME_GIT_PROMPT_DIRTY_ICON='%B%228F%228f%b'
 ZSH_THEME_GIT_PROMPT_PREFIX='
-%{'"$status_color"'%}╞[%{$reset_color%}%15Fgit%15f%{'"$status_color"'%}|%{$reset_color%}%15F'
-ZSH_THEME_GIT_PROMPT_SUFFIX='%{'"$status_color"'%}]%{$reset_color%}'
-ZSH_THEME_GIT_PROMPT_CLEAN='%{'"$status_color"'%}(%{$reset_color%}%B%4F❄%4f%b%{'"$status_color"'%})%{$reset_color%}'
-ZSH_THEME_GIT_PROMPT_DIRTY='%{'"$status_color"'%}(%{$reset_color%}%B%3F%3f%b%{'"$status_color"'%})%{$reset_color%}'
+%{'"$status_color"'%}╞(%{'"$reset_color"'%}%121F%Bgit%121f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%212F%B'
+ZSH_THEME_GIT_PROMPT_SUFFIX='%{'"$status_color"'%})%{'"$reset_color"'%}'
+ZSH_THEME_GIT_PROMPT_CLEAN='%212f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}${ZSH_THEME_GIT_PROMPT_CLEAN_ICON}'
+ZSH_THEME_GIT_PROMPT_DIRTY='%212f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}${ZSH_THEME_GIT_PROMPT_DIRTY_ICON}'
+
+ZSH_THEME_VIRTUALENV_PREFIX='
+%{'"$status_color"'%}╞(%{'"$reset_color"'%}%121F%Benv%121f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%212F%B'
+ZSH_THEME_VIRTUALENV_SUFFIX='%212f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%117F%B$(__shrink_path "$VIRTUAL_ENV:h")%117f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%228F%B$(__virtualenv_version_info)%228f%b%{'"$status_color"'%})%{'"$reset_color"'%}'
 
 unset -v status_color
 
+function __virtualenv_prompt_fix {
+  if [[ -v VIRTUAL_ENV ]]
+  then
+    PROMPT="${${PROMPT#"${PROMPT%%[^[:space:]]*}"}#"($VIRTUAL_ENV:t)"}"
+    PROMPT="${PROMPT#"${PROMPT%%[^[:space:]]*}"}"
+  fi
+}
+precmd_functions+=(__virtualenv_prompt_fix)
+
+# ╒╤═╤╤══
+# ╞╧╡╞╧╛
+# ╞╡╞╧╛
+# │╞╧╛
+# ╞╧╛
+# ╘╛
 # vim:ft=zsh:tw=0

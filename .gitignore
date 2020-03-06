@@ -1,8 +1,8 @@
-# custom files
-custom/
-
-# temp files directories
-cache/
-log/
-*.swp
+/custom/plugins/zsh-*
+/cache
+/log
+*~
+*.pyc
+*.sw[op]
 .DS_Store
+.vscode
