@@ -5,37 +5,57 @@
 function fif
 {
   emulate -L zsh
-  if ! (( $# ))
+  if (( $# != 1 ))
   then
-    print >&2 -f 'usage: %s pattern ...\n' "$0"
+    print >&2 -f 'usage: %s pattern\n' "$0"
     return 1
   fi 
-  local IFS=' '
-  local rg_options=(
-    "--files-with-matches"
-    "--hidden"
-    "--no-line-number"
-    "--no-messages"
-    "--no-heading"
-    "--smart-case"
-  )
-  local fzf_options=(
-    "--color=header:212,info:121,pointer:117,prompt:141,gutter:232"
-    "--color=bg:232,bg+:232,fg:141,fg+:117,hl:117,hl+:228"
-    "--color=border:121,marker:121,spinner:212,preview-bg:232,preview-fg:228"
-    "--bind abort:ctrl-c"
-  )
   if command -v bat
   then
-    local preview="bat --style=grid --color=always --paging=never -- {}"
+    local preview=(
+      "bat"
+      "--style=numbers"
+      "--color=always"
+      "--paging=never"
+    )
   elif command -v highlight
   then
-    local preview="highlight --force --line-numbers --out-format=xterm256 --style=golden --wrap-no-numbers -- {}"
+    local preview=(
+      "highlight"
+      "--force"
+      "--line-numbers"
+      "--out-format=xterm256"
+      "--style=golden"
+      "--wrap-no-numbers"
+    )
   else
-    local preview="cat -b -- {}"
+    local preview=(
+      "cat"
+      "-b"
+    )
   fi > /dev/null
-
-  rg "${(@)rg_options}" -- "$@" | fzf "${(@)fzf_options}" --preview="${preview} |
-    rg --color=always --column --heading --hidden --no-line-number --smart-case --context=40 -- ${${(@q)@}[*]} ||
-    rg --color=always --column --heading --hidden --no-line-number --smart-case --context=40 -- ${${(@q)@}[*]} {}"
+  local IFS=$' \t\n'
+  local rg=(
+    rg
+    --color=never
+    --no-column
+    --no-heading
+    --no-line-number
+    --smart-case
+  )
+  local fzf=(
+    fzf
+    --color="header:221,info:81,pointer:176,prompt:176,gutter:234"
+    --color="bg:234,bg+:234,fg:81,fg+:114,hl:176,hl+:81"
+    --color="border:176,spinner:210,preview-bg:234,preview-fg:250"
+    --bind="ctrl-c:abort"
+    --bind="change:reload:${${(@q)rg}[*]} --files-with-matches -- {q}"
+    --no-info
+    --phony
+    --preview="${${(@q)preview}[*]} {} |
+      ${${(@q)rg}[*]} --color=always --colors=match:fg:210 --context=\$((FZF_PREVIEW_LINES)) -- {q} ||
+      ${${(@q)rg}[*]} --color=always --colors=match:fg:210 --context=\$((FZF_PREVIEW_LINES)) -- {q} {}"
+    --query "${(q)1}"
+  )
+  FZF_DEFAULT_COMMAND="${${(@q)rg}[*]} --files-with-matches -- ${(q)1}" "${(@)fzf}"
 }
