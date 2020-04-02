@@ -48,22 +48,22 @@ function __shrink_path {
   return "$retval"
 }
 
-status_color='$fg[$(( $? ? ($? - 1) % 6 + 9 : 7 ))]'
+status_color='$fg[$(( $? ? ($? - 1) % 6 + 1 : 141 ))]'
 
-PROMPT='%{'"$status_color"'%}╒(%{'"$reset_color"'%}%7F%B%n%7f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%5F%B%m%5f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%6F%B$(() { setopt noincappendhistory; return "$1"; } "$?"; __shrink_path)%6f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%2F%B%y%2f%b%{'"$status_color"'%})%{'"$reset_color"'%}$(() { setopt noincappendhistory; return "$1"; } "$?"; __virtualenv_prompt_info)$(() { setopt noincappendhistory; return "$1"; } "$?"; __git_prompt_info)
-%{'"$status_color"'%}╘(%{'"$reset_color"'%}%(?.%(!.%7F%B#%7f%b.%7F%Bﬦ%7f%b).%7F%B%?%7f%b)%{'"$status_color"'%})%{'"$reset_color"'%} '
+PROMPT='%{'"$status_color"'%}╒(%{'"$reset_color"'%}%121F%B%n%121f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%212F%B%m%212f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%117F%B$(() { setopt noincappendhistory; return "$1"; } "$?"; __shrink_path)%117f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%228F%B%y%228f%b%{'"$status_color"'%})%{'"$reset_color"'%}$(() { setopt noincappendhistory; return "$1"; } "$?"; __virtualenv_prompt_info)$(() { setopt noincappendhistory; return "$1"; } "$?"; __git_prompt_info)
+%{'"$status_color"'%}╘(%{'"$reset_color"'%}%(?.%(!.%121F%B#%121f%b.%121F%Bﬦ%121f%b).%121F%B%?%121f%b)%{'"$status_color"'%})%{'"$reset_color"'%} '
 
-ZSH_THEME_GIT_PROMPT_CLEAN_ICON='%B%6F%6f%b'
-ZSH_THEME_GIT_PROMPT_DIRTY_ICON='%B%3F%3f%b'
+ZSH_THEME_GIT_PROMPT_CLEAN_ICON='%B%117F%117f%b'
+ZSH_THEME_GIT_PROMPT_DIRTY_ICON='%B%215F%215f%b'
 ZSH_THEME_GIT_PROMPT_PREFIX='
-%{'"$status_color"'%}╞(%{'"$reset_color"'%}%7F%Bgit%7f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%5F%B'
+%{'"$status_color"'%}╞(%{'"$reset_color"'%}%121F%Bgit%121f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%212F%B'
 ZSH_THEME_GIT_PROMPT_SUFFIX='%{'"$status_color"'%})%{'"$reset_color"'%}'
-ZSH_THEME_GIT_PROMPT_CLEAN='%5f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}${ZSH_THEME_GIT_PROMPT_CLEAN_ICON}'
-ZSH_THEME_GIT_PROMPT_DIRTY='%5f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}${ZSH_THEME_GIT_PROMPT_DIRTY_ICON}'
+ZSH_THEME_GIT_PROMPT_CLEAN='%212f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}${ZSH_THEME_GIT_PROMPT_CLEAN_ICON}'
+ZSH_THEME_GIT_PROMPT_DIRTY='%212f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}${ZSH_THEME_GIT_PROMPT_DIRTY_ICON}'
 
 ZSH_THEME_VIRTUALENV_PREFIX='
-%{'"$status_color"'%}╞(%{'"$reset_color"'%}%7F%Benv%7f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%5F%B'
-ZSH_THEME_VIRTUALENV_SUFFIX='%5f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%6F%B$(__shrink_path "$VIRTUAL_ENV:h")%6f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%2F%B$(__virtualenv_version_info)%2f%b%{'"$status_color"'%})%{'"$reset_color"'%}'
+%{'"$status_color"'%}╞(%{'"$reset_color"'%}%121F%Benv%121f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%212F%B'
+ZSH_THEME_VIRTUALENV_SUFFIX='%212f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%117F%B$(__shrink_path "$VIRTUAL_ENV:h")%117f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}%228F%B$(__virtualenv_version_info)%228f%b%{'"$status_color"'%})%{'"$reset_color"'%}'
 
 unset -v status_color
 
