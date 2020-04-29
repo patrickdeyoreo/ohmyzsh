@@ -11,11 +11,11 @@
 #######################################
 function cdls
 {
-  if [[ $# -gt 0 ]]
+  if (( $# ))
   then
-    cd -- "${(P)#}" && ls "${@:1:-1}"
+    cd -- "${!#}" && ls "${@:1:-1}"
   else
-    printf '%s: usage: %s [ls-options] directory\n' "$0" "$0"
+    cd && ls
   fi
 }
 
