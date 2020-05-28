@@ -5,36 +5,39 @@
 function fif
 {
   emulate -L zsh
+
   if (( $# != 1 ))
   then
     print >&2 -f 'usage: %s pattern\n' "$0"
     return 1
   fi 
+
+  local IFS=$' \t\n'
+
   if command -v bat
   then
     local preview=(
-      "bat"
-      "--style=numbers"
-      "--color=always"
-      "--paging=never"
+      bat
+      --style=numbers
+      --color=always
+      --paging=never
     )
   elif command -v highlight
   then
     local preview=(
-      "highlight"
-      "--force"
-      "--line-numbers"
-      "--out-format=xterm256"
-      "--style=golden"
-      "--wrap-no-numbers"
+      highlight
+      --force
+      --line-numbers
+      --out-format=xterm256
+      --style=golden
+      --wrap-no-numbers
     )
   else
     local preview=(
-      "cat"
-      "-b"
+      cat
+      -b
     )
   fi > /dev/null
-  local IFS=$' \t\n'
   local rg=(
     rg
     --color=never
@@ -53,8 +56,8 @@ function fif
     --no-info
     --phony
     --preview="${${(@q)preview}[*]} {} |
-      ${${(@q)rg}[*]} --color=always --colors=match:fg:210 --context=\$((FZF_PREVIEW_LINES)) -- {q} ||
-      ${${(@q)rg}[*]} --color=always --colors=match:fg:210 --context=\$((FZF_PREVIEW_LINES)) -- {q} {}"
+      ${${(@q)rg}[*]} --color=always --colors=match:fg:red --colors=match:style:underline --context=\$((FZF_PREVIEW_LINES)) -- {q} ||
+      ${${(@q)rg}[*]} --color=always --colors=match:fg:red --colors=match:style:underline --context=\$((FZF_PREVIEW_LINES)) -- {q} {}"
     --query "${(q)1}"
   )
   FZF_DEFAULT_COMMAND="${${(@q)rg}[*]} --files-with-matches -- ${(q)1}" "${(@)fzf}"
