@@ -3,18 +3,18 @@
 zmodload zsh/terminfo
 
 () {
-  local -i index
   emulate -L zsh
-  index=$(echoti colors)
+  local index="$(echoti colors)"
   while ((index--)); do
-    fg[$((index))]=$(echoti setaf "$((index))")
+    fg[$((index))]="$(echoti setaf "$((index))")"
+    bg[$((index))]="$(echoti setab "$((index))")"
   done
 }
 
 function __git_prompt_info {
   local retval=$?
   emulate -LR zsh
-  setopt promptbang promptpercent promptsubst
+  setopt promptpercent promptsubst
   print -P "$(git_prompt_info; exit "$retval")"
   return "$retval"
 }
@@ -22,7 +22,7 @@ function __git_prompt_info {
 function __virtualenv_prompt_info {
   local retval=$?
   emulate -LR zsh
-  setopt promptbang promptpercent promptsubst
+  setopt promptpercent promptsubst
   print -P "$(virtualenv_prompt_info; exit "$retval")"
   return "$retval"
 }
@@ -30,23 +30,23 @@ function __virtualenv_prompt_info {
 function __virtualenv_version_info {
   local retval=$?
   emulate -LR zsh
-  setopt promptbang promptpercent promptsubst
   local -A pyvenvcfg=("${(@)=${(@ps.\n.)$(< $VIRTUAL_ENV/pyvenv.cfg)}/ = / }")
   print "$pyvenvcfg[version]"
   return "$retval"
 }
 
 function __shrink_path {
-  local retval=$?
+  local retval=$? 
   emulate -LR zsh
-  setopt extendedglob promptpercent
+  setopt histsubstpattern extendedglob
   local match mbegin mend
-  local prefix=${${(D)1-${(%)$(cat <<<%~)}}%%/*}
-  local suffix=${${(D)1-${(%)$(cat <<<%~)}}##$prefix(*/)#}
-  local middle=${${${(D)1-${(%)$(cat <<<%~)}}/#%(#b)$prefix(*)$suffix/$match[1]}:W:/:s/#%(#b)(??)??##/$match[1]*}
-  print "$prefix$middle$suffix"
+  local middle="${(D)${1:-.}:P}" 
+  local prefix="${middle%%/*}" 
+  local suffix="${middle##*/}" 
+  print -f '%s\n' "$prefix${middle[$(($#prefix+1)),$((-$#suffix-1))]:W:/:s/(#b)(??)??*/$match[1]*}$suffix"
   return "$retval"
 }
+
 
 status_color='$fg[$(( $? ? ($? - 1) % 6 + 9 : 7 ))]'
 
