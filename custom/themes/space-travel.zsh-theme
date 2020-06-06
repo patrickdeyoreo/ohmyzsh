@@ -36,14 +36,16 @@ function __virtualenv_version_info {
 }
 
 function __shrink_path {
-  local retval=$? 
+  local retval=$?
   emulate -LR zsh
   setopt histsubstpattern extendedglob
   local match mbegin mend
-  local middle="${(D)${1:-.}:P}" 
-  local prefix="${middle%%/*}" 
-  local suffix="${middle##*/}" 
-  print -f '%s\n' "$prefix${middle[$(($#prefix+1)),$((-$#suffix-1))]:W:/:s/(#b)(??)??*/$match[1]*}$suffix"
+  local curdir="${(D)${1:-.}:P}"
+  local prefix="${curdir%%/*}" 
+  curdir="${curdir#${prefix}/#}"
+  local suffix="${curdir##*/}"
+  curdir="${curdir%/#${suffix}}"
+  print -f '%s\n' "${prefix}${curdir:W:/:s/#%(#b)(??)??*/${match[1]}*}${suffix}"
   return "$retval"
 }
 
