@@ -2,7 +2,7 @@
 # see fzf(1), rg(1)
 
 # find files with fzf and ripgrep
-function fif
+function fif()
 {
   emulate -L zsh
 
@@ -61,4 +61,10 @@ function fif
     --query "${(q)1}"
   )
   FZF_DEFAULT_COMMAND="${${(@q)rg}[*]} --files-with-matches -- ${(q)1}" "${(@)fzf}"
+}
+
+
+# kill processes
+function fkill() {
+  ps -e -j --no-headers | fzf -m | column -t | cut -f 1 -d ' ' | xargs kill "$@"
 }
