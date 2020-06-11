@@ -3,48 +3,59 @@
 zmodload zsh/terminfo
 
 () {
-  emulate -L zsh
+  emulate -LR zsh
   local index="$(echoti colors)"
-  while ((index--)); do
+  while ((index--))
+  do
     fg[$((index))]="$(echoti setaf "$((index))")"
     bg[$((index))]="$(echoti setab "$((index))")"
   done
 }
 
-function __git_prompt_info {
-  local retval=$?
+function __git_prompt_info() {
+  local "retval=$?"
   emulate -LR zsh
   setopt promptpercent promptsubst
   print -P "$(git_prompt_info; exit "$retval")"
   return "$retval"
 }
 
-function __virtualenv_prompt_info {
-  local retval=$?
+function __virtualenv_prompt_info() {
+  local "retval=$?"
   emulate -LR zsh
   setopt promptpercent promptsubst
   print -P "$(virtualenv_prompt_info; exit "$retval")"
   return "$retval"
 }
 
-function __virtualenv_version_info {
-  local retval=$?
+function __virtualenv_version_info() {
+  local "retval=$?"
   emulate -LR zsh
-  local -A pyvenvcfg=("${(@)=${(@ps.\n.)$(< $VIRTUAL_ENV/pyvenv.cfg)}/ = / }")
-  print "$pyvenvcfg[version]"
+  setopt extendedglob
+  local -A pyvenvcfg=(${(@f)"${(@f)$(< "$VIRTUAL_ENV/pyvenv.cfg")}"/ #= #/$'\n'})
+  print -f '%s\n' "${pyvenvcfg[version]}"
   return "$retval"
 }
 
-function __shrink_path {
-  local retval=$?
+function __virtualenv_prompt_fix() {
   emulate -LR zsh
-  setopt histsubstpattern extendedglob
+  setopt extendedglob
+  if (( ${+VIRTUAL_ENV} ))
+  then
+    PROMPT="${PROMPT## #\( #${VIRTUAL_ENV:t} #\) #}"
+  fi
+}
+
+function __shrink_path() {
+  local "retval=$?"
+  emulate -LR zsh
+  setopt extendedglob histsubstpattern
   local match mbegin mend
   local curdir="${(D)${1:-.}:P}"
   local prefix="${curdir%%/*}" 
-  curdir="${curdir#${prefix}/#}"
+  curdir="${curdir#${prefix}}"
   local suffix="${curdir##*/}"
-  curdir="${curdir%/#${suffix}}"
+  curdir="${curdir%${suffix}}"
   print -f '%s\n' "${prefix}${curdir:W:/:s/#%(#b)(??)??*/${match[1]}*}${suffix}"
   return "$retval"
 }
@@ -69,14 +80,7 @@ ZSH_THEME_VIRTUALENV_SUFFIX='%5f%b%{'"$status_color"'%})═(%{'"$reset_color"'%}
 
 unset -v status_color
 
-# function __virtualenv_prompt_fix {
-#   if [[ -v VIRTUAL_ENV ]]
-#   then
-#     PROMPT="${${PROMPT#"${PROMPT%%[^[:space:]]*}"}#"($VIRTUAL_ENV:t)"}"
-#     PROMPT="${PROMPT#"${PROMPT%%[^[:space:]]*}"}"
-#   fi
-# }
-# precmd_functions+=(__virtualenv_prompt_fix)
+precmd_functions+=(__virtualenv_prompt_fix)
 
 # ╒╤═╤╤══
 # ╞╧╡╞╧╛
