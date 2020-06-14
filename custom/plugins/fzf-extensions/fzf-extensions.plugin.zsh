@@ -80,3 +80,9 @@ function fkill() {
     print -- "${kill[@]}" && "${kill[@]}"
   fi
 }
+
+
+# kill processes
+function fkill() {
+  ps -e -j --no-headers | fzf -m | column -t | cut -f 1 -d ' ' | xargs kill "$@"
+}
