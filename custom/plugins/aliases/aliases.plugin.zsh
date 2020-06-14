@@ -1,17 +1,19 @@
 # default options
-alias   dir="dir --color=auto"
-alias egrep="egrep --color=auto"
-alias fgrep="fgrep --color=auto"
-alias   gdb="gdb -q"
-alias  grep="grep  --color=auto"
-alias    ls="ls -BCp --group-directories-first --color=auto"
-alias mkdir="mkdir -pv"
-alias    mv="mv -iv"
-alias    rm="rm -Iv"
-alias rmdir="rmdir -v"
-alias  vdir="vdir --color=auto"
-alias   vim="vim -p"
-alias  nvim="nvim -p"
+alias dir='dir --color=auto'
+alias diff='diff --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias gdb='gdb -q'
+alias grep='grep  --color=auto'
+alias ip='ip -c'
+alias ls='ls -BCFv --color=auto'
+alias mkdir='mkdir -pv'
+alias mv='mv -iv'
+alias rm='rm -Iv'
+alias rmdir='rmdir -v'
+alias vdir='vdir --color=auto'
+alias vim='vim -p'
+alias nvim='nvim -p'
 
 # go back to previous directory
 alias -- -='cd -'
@@ -32,9 +34,9 @@ alias pu='pushd'
 alias j='jobs -p'
 
 # ls
-alias   l='ls'
-alias  ll='ls -l'
-alias  la='ls -A'
+alias l='ls'
+alias ll='ls -l'
+alias la='ls -A'
 alias lla='ls -lA'
 
 # ps
@@ -42,12 +44,11 @@ alias psa='ps -a'
 alias pse='ps -e'
 alias psf='ps -f'
 alias psj='ps -j'
-alias psu='ps -u "${USERNAME:-${USER:-$(id -nu)}}"'
 
 # python
-alias     py='python'
-alias    py3='python3'
-alias    py2='python2'
+alias py='python'
+alias py3='python3'
+alias py2='python2'
 alias python='python3'
 
 # thefuck
@@ -65,7 +66,7 @@ fi
 # tmux
 if command -v tmux > /dev/null
 then
-  alias  t='tmux'
+  alias t='tmux'
   alias tn='tmux new'
   alias tns='tmux new -s'
   alias ta='tmux attach'
@@ -75,18 +76,18 @@ fi
 # xclip
 if command -v xclip > /dev/null
 then
-  alias        cb='xclip -sel c'
-  alias  cblstrip='xclip -sel c -o | sed '"'"'s@^[ \t]\+@@'"'"' | xclip -sel c'
-  alias  cbrstrip='xclip -sel c -o | sed '"'"'s@[ \t]\+$@@'"'"' | xclip -sel c'
-  alias   cbstrip='xclip -sel c -o | sed '"'"'s@^[ \t]\+\|[ \t]\+$@@'"'"' | xclip -sel c'
-  alias       cb1='xclip -sel p'
+  alias cb='xclip -sel c'
+  alias cblstrip='xclip -sel c -o | sed '"'"'s@^[ \t]\+@@'"'"' | xclip -sel c'
+  alias cbrstrip='xclip -sel c -o | sed '"'"'s@[ \t]\+$@@'"'"' | xclip -sel c'
+  alias cbstrip='xclip -sel c -o | sed '"'"'s@^[ \t]\+\|[ \t]\+$@@'"'"' | xclip -sel c'
+  alias cb1='xclip -sel p'
   alias cb1lstrip='xclip -sel p -o | sed '"'"'s@^[ \t]\+@@'"'"' | xclip -sel p'
   alias cb1rstrip='xclip -sel p -o | sed '"'"'s@[ \t]\+$@@'"'"' | xclip -sel p'
-  alias  cb1strip='xclip -sel p -o | sed '"'"'s@^[ \t]\+\|[ \t]\+$@@'"'"' | xclip -sel p'
-  alias       cb2='xclip -sel s'
+  alias cb1strip='xclip -sel p -o | sed '"'"'s@^[ \t]\+\|[ \t]\+$@@'"'"' | xclip -sel p'
+  alias cb2='xclip -sel s'
   alias cb2lstrip='xclip -sel s -o | sed '"'"'s@^[ \t]\+@@'"'"' | xclip -sel s'
   alias cb2rstrip='xclip -sel s -o | sed '"'"'s@[ \t]\+$@@'"'"' | xclip -sel s'
-  alias  cb2strip='xclip -sel s -o | sed '"'"'s@^[ \t]\+\|[ \t]\+$@@'"'"' | xclip -sel s'
+  alias cb2strip='xclip -sel s -o | sed '"'"'s@^[ \t]\+\|[ \t]\+$@@'"'"' | xclip -sel s'
 fi
 
 # feh
@@ -125,7 +126,8 @@ fi
 
 # tmux
 if command -v tmux > /dev/null
-then alias tnsw=$'tmux attach-session -t "$(
+then
+  alias tnsw=$'tmux attach-session -t "$(
 tmux new-window -P -F "#{session_name}" -a -t "$(
 tmux new-session -P -F "#{session_name}" -d -t "${$(
 tmux list-sessions -F "#{session_group}"

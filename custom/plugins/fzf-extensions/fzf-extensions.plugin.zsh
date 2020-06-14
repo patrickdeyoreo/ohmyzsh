@@ -4,12 +4,12 @@
 # find files with fzf and ripgrep
 function fif()
 {
-  emulate -L zsh
+  emulate -LR zsh
 
-  if (( $# != 1 ))
+  if ! (( $# ))
   then
-    print >&2 -f 'usage: %s pattern\n' "$0"
-    return 1
+    >&2 print -f 'usage: %s PATTERN [PATH ...]\n' "$0"
+    return 2
   fi 
 
   local IFS=$' \t\n'
@@ -44,27 +44,39 @@ function fif()
     --no-column
     --no-heading
     --no-line-number
+    --no-hidden
     --smart-case
   )
   local fzf=(
     fzf
-    --color="header:221,info:81,pointer:176,prompt:176,gutter:234"
-    --color="bg:234,bg+:234,fg:81,fg+:114,hl:176,hl+:81"
-    --color="border:176,spinner:210,preview-bg:234,preview-fg:250"
-    --bind="ctrl-c:abort"
-    --bind="change:reload:${${(@q)rg}[*]} --files-with-matches -- {q}"
+    --color='fg:4,fg+:6,hl:2,hl+:5,preview-bg:0,preview-fg:7'
+    --color='header:1,info:3,pointer:5,prompt:5,gutter:0,border:5,spinner:2'
+    --bind='ctrl-c:abort'
+    --bind='change:reload:'"${${(q)rg[@]}[*]}"' --files-with-matches -- {q} '"${${(q)@:2}[*]}"
     --no-info
     --phony
-    --preview="${${(@q)preview}[*]} {} |
-      ${${(@q)rg}[*]} --color=always --colors=match:fg:red --colors=match:style:underline --context=\$((FZF_PREVIEW_LINES)) -- {q} ||
-      ${${(@q)rg}[*]} --color=always --colors=match:fg:red --colors=match:style:underline --context=\$((FZF_PREVIEW_LINES)) -- {q} {}"
-    --query "${(q)1}"
+    --preview="${${(q)preview[@]}[*]}"' {} |
+      '"${${(q)rg[@]}[*]}"' --color=always --colors=match:style:underline --context=$((FZF_PREVIEW_LINES)) -- {q} ||
+      '"${${(q)rg[@]}[*]}"' --color=always --colors=match:style:underline --context=$((FZF_PREVIEW_LINES)) -- {q} {}'
+    --query="${(q)1}"
   )
-  FZF_DEFAULT_COMMAND="${${(@q)rg}[*]} --files-with-matches -- ${(q)1}" "${(@)fzf}"
+  FZF_DEFAULT_COMMAND="${${(q)rg[@]}[*]}"' --files-with-matches -- '"${${(q)@}[*]}" "${(@)fzf}"
 }
 
 
 # kill processes
 function fkill() {
-  ps -e -j --no-headers | fzf -m | column -t | cut -f 1 -d ' ' | xargs kill "$@"
+  emulate -LR zsh
+  local IFS=$' \t\n'
+  local ps=(ps -e -j --no-headers)
+  local fzf=(fzf -m --sort --bind='change:reload:'"${${(q)ps[@]}[*]}")
+  local kill=(kill "$@")
+  while read -r
+  do
+    kill+=("${${=REPLY[@]}[1]}")
+  done < <(FZF_DEFAULT_COMMAND="${${(q)ps[@]}[*]}" "${fzf[@]}")
+  if (( $# != ${#kill[@]:1} ))
+  then
+    print -- "${kill[@]}" && "${kill[@]}"
+  fi
 }
