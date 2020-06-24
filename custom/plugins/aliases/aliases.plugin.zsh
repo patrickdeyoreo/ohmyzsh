@@ -1,32 +1,38 @@
-# default options
-alias dir='dir --color=auto'
+# aliases.plugin.zsh: just a bunch of shell aliases
+
+# default command options
+alias cp='cp -iv'
 alias diff='diff --color=auto'
+alias dir='dir --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias gdb='gdb -q'
-alias grep='grep  --color=auto'
+alias grep='grep --color=auto'
 alias ip='ip -c'
-alias ls='ls -BCFv --color=auto'
+alias ls='ls -CFHhv --group-directories-first --color=auto'
 alias mkdir='mkdir -pv'
 alias mv='mv -iv'
+alias nvim='nvim -p'
 alias rm='rm -Iv'
 alias rmdir='rmdir -v'
+alias tree='tree -CFlv --dirsfirst --ignore-case --matchdirs -I "(${(j.|.)=${(@f)$(< {"${HOME}/.config/git/ignore","${GIT_DIR}"/info/exclude,.gitignore}(-.N) < /dev/null)}[@]/%\/\*#/})"  --filelimit "$(( ${LINES:-$(tput lines)} ))"'
+
 alias vdir='vdir --color=auto'
 alias vim='vim -p'
 alias nvim='nvim -p'
 
-# go back to previous directory
-alias -- -='cd -'
+# expand aliases
+alias sudo='sudo '
 
 # clear
-alias c='clear'
+alias clr='clear'
 
 # vim
 alias v='vim'
 alias n='nvim'
 
 # dirstack
-alias  d='dirs'
+alias ds='dirs'
 alias po='popd'
 alias pu='pushd'
 
@@ -37,13 +43,15 @@ alias j='jobs -p'
 alias l='ls'
 alias ll='ls -l'
 alias la='ls -A'
-alias lla='ls -lA'
+alias lla='ls -Al'
+alias lr='ls -Rt'
+alias lt='ls -1crt'
+alias lat='ls -1Acrt'
+alias dls='ls -dl'
 
 # ps
-alias psa='ps -a'
-alias pse='ps -e'
-alias psf='ps -f'
-alias psj='ps -j'
+alias p='ps -o user,pid,ppid,pgid,tname,stat,cmd'
+alias psu='ps -u "${USERNAME:-${USER:-${LOGNAME:-$(id -n -u)}}}"'
 
 # python
 alias py='python'
@@ -52,47 +60,77 @@ alias py2='python2'
 alias python='python3'
 
 # thefuck
-if command -v fuck > /dev/null
-then
+if command -v fuck > /dev/null; then
   alias fk='fuck'
 fi
 
 # htop
-if command -v htop > /dev/null
-then
+if command -v htop > /dev/null; then
   alias top='htop'
 fi
 
 # tmux
-if command -v tmux > /dev/null
-then
+if command -v tmux > /dev/null; then
   alias t='tmux'
-  alias tn='tmux new'
-  alias tns='tmux new -s'
-  alias ta='tmux attach'
-  alias tat='tmux attach -t'
+  alias tn='tmux new-session'
+  alias tns='tmux new-session -s'
+  alias tnt='tmux new-session -t'
+  alias tnw='tmux new-window'
+  alias tnn='tmux new-window -n'
+  alias ta='tmux attach-session'
+  alias tat='tmux attach-session -t'
+  function tnsw() {
+    emulate -L zsh
+    local name="$1"
+    if test -n "$1"; then
+      tmux new -d -t "$1" ";" new-window ";" attach
+    else
+      name="$(tmux has-session &&
+        tmux list-sessions -F "#{session_group}" | sort -u |
+        FZF_DEFAULT_OPTS="--cycle --height=15% $FZF_DEFAULT_OPTS" $(__fzfcmd) -1)"
+      if test -n "${name}"; then
+        tmux new -d -t "${name}" ";" new-window ";" attach
+      fi
+    fi
+  }
 fi
 
 # xclip
-if command -v xclip > /dev/null
-then
-  alias cb='xclip -sel c'
-  alias cblstrip='xclip -sel c -o | sed '"'"'s@^[ \t]\+@@'"'"' | xclip -sel c'
-  alias cbrstrip='xclip -sel c -o | sed '"'"'s@[ \t]\+$@@'"'"' | xclip -sel c'
-  alias cbstrip='xclip -sel c -o | sed '"'"'s@^[ \t]\+\|[ \t]\+$@@'"'"' | xclip -sel c'
-  alias cb1='xclip -sel p'
-  alias cb1lstrip='xclip -sel p -o | sed '"'"'s@^[ \t]\+@@'"'"' | xclip -sel p'
-  alias cb1rstrip='xclip -sel p -o | sed '"'"'s@[ \t]\+$@@'"'"' | xclip -sel p'
-  alias cb1strip='xclip -sel p -o | sed '"'"'s@^[ \t]\+\|[ \t]\+$@@'"'"' | xclip -sel p'
-  alias cb2='xclip -sel s'
-  alias cb2lstrip='xclip -sel s -o | sed '"'"'s@^[ \t]\+@@'"'"' | xclip -sel s'
-  alias cb2rstrip='xclip -sel s -o | sed '"'"'s@[ \t]\+$@@'"'"' | xclip -sel s'
-  alias cb2strip='xclip -sel s -o | sed '"'"'s@^[ \t]\+\|[ \t]\+$@@'"'"' | xclip -sel s'
+if command -v xclip > /dev/null; then
+  alias cb='xclip -selection clipboard'
+  alias cb1='xclip -selection primary'
+  alias cb2='xclip -selection secondary'
+  alias cb-strip='xclip -o -selection clipboard |
+    sed ''s%^[ \t]\+\|[ \t]\+$%%'' |
+    xclip -i -selection clipboard'
+  alias cb1-strip='xclip -o -selection primary |
+    sed ''s%^[ \t]\+\|[ \t]\+$%%'' |
+    xclip -i -selection primary'
+  alias cb2-strip='xclip -o -selection secondary |
+    sed ''s%^[ \t]\+\|[ \t]\+$%%'' |
+    xclip -i -selection secondary'
+  alias cb-strip-l='xclip -o -selection clipboard |
+    sed ''s%^[ \t]\+%%'' |
+    xclip -i -selection clipboard'
+  alias cb1-strip-l='xclip -o -selection primary |
+    sed ''s%^[ \t]\+%%'' |
+    xclip -i -selection primary'
+  alias cb2-strip-l='xclip -o -selection secondary |
+    sed ''s%^[ \t]\+%%'' |
+    xclip -i -selection secondary'
+  alias cb-strip-r='xclip -o -selection clipboard |
+    sed ''s%[ \t]\+$%%'' |
+    xclip -i -selection clipboard'
+  alias cb1-strip-r='xclip -o -selection primary |
+    sed ''s%[ \t]\+$%%'' |
+    xclip -i -selection primary'
+  alias cb2-strip-r='xclip -o -selection secondary |
+    sed ''s%[ \t]\+$%%'' |
+    xclip -i -selection secondary'
 fi
 
 # feh
-if command -v feh > /dev/null
-then
+if command -v feh > /dev/null; then
   alias feh-slideshow='feh --auto-zoom --image-bg black --slideshow-delay 8'
 fi
 
@@ -101,8 +139,7 @@ alias wanip4='dig @resolver1.opendns.com -4 myip.opendns.com +short'
 alias wanip6='dig @resolver1.opendns.com -6 myip.opendns.com +short'
 
 # youtube-dl
-if command -v youtube-dl > /dev/null
-then
+if command -v youtube-dl > /dev/null; then
   typeset -xT YTDL_OPTS ytdl_opts ' '
   ytdl_opts=(
     '--geo-bypass'
@@ -124,14 +161,4 @@ then
   alias ytdla="youtube-dl ${YTDLA_OPTS}"
 fi
 
-# tmux
-if command -v tmux > /dev/null
-then
-  alias tnsw=$'tmux attach-session -t "$(
-tmux new-window -P -F "#{session_name}" -a -t "$(
-tmux new-session -P -F "#{session_name}" -d -t "${$(
-tmux list-sessions -F "#{session_group}"
-)%%\n*}"
-):$"
-)"'
-fi
+# set ft=zsh:et:sts=2:sw=2:ts=8:tw=0
