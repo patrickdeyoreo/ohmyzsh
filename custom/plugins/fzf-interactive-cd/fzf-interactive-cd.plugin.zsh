@@ -73,34 +73,34 @@ zic-completion() {
   setopt localoptions localtraps noshwordsplit noksh_arrays noposixbuiltins
   local tokens cmd
 
-  tokens=(${(z)LBUFFER})
-  cmd=${tokens[1]}
+  tokens=("${(z)LBUFFER}")
+  cmd="${tokens[1]}"
 
-  if [[ "$LBUFFER" =~ $'^[ \t]*(\\\\?cd|\'cd\'|"cd")$' ]]; then
-    zle ${__zic_default_completion:-expand-or-complete}
+  if [[ "${LBUFFER}" =~ $'^[ \t]*(\\\\?cd|\'cd\'|"cd")$' ]]; then
+    zle "${__zic_default_completion:-expand-or-complete}"
   elif [[ "${(Q)cmd}" = cd ]]; then
     zle complete-word
-    if [[ "${tokens[*]:1}" == "${${(@A)tokens::=${(@Az)LBUFFER}}[*]:1}" ]]; then
-      if _zic_complete ${tokens[2,-1]/#\~/$HOME}; then
+    if [[ "${tokens[*]:1}" == "${${(@A)tokens::=${(z)LBUFFER}}[*]:1}" ]]; then
+      if _zic_complete "${tokens[2,-1]/#\~/$HOME}"; then
         zle auto-suffix-retain
-        zle -R 
-        while [[ "${tokens[*]:1}" != "${${(@A)tokens::=${(@z)LBUFFER}}[*]:1}" ]]; do
-          if _zic_complete ${tokens[2,-1]/#\~/$HOME}; then
+        zle -R
+        while [[ "${tokens[*]:1}" != "${${(@A)tokens::=${(z)LBUFFER}}[*]:1}" ]]; do
+          if _zic_complete "${tokens[2,-1]/#\~/$HOME}"; then
             zle auto-suffix-retain
             zle -R 
           else
+            zle auto-suffix-retain
+            zle -R 
             break
           fi
         done
-        #zle list-choices
-        zle -R 
       else
-        zle ${__zic_default_completion:-expand-or-complete}
+        zle "${__zic_default_completion:-expand-or-complete}"
       fi
     fi
     return
   else
-    zle ${__zic_default_completion:-expand-or-complete}
+    zle "${__zic_default_completion:-expand-or-complete}"
   fi
 } 
 
