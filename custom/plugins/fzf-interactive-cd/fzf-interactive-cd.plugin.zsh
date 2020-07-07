@@ -26,19 +26,19 @@ _zic_complete() {
     return 1
   fi
 
-  fzf=$(__zic_fzf_prog)
-
   if [ $(echo $l | wc -l) -eq 1 ]; then
     matches=${(q)l}
-  else
-    matches=$(echo $l \
-        | FZF_DEFAULT_OPTS="--height=${FZF_TMUX_HEIGHT:-40%} --reverse \
-          $FZF_DEFAULT_OPTS $FZF_COMPLETION_OPTS $FZF_INTERACTIVE_CD_OPTS \
-          --bind 'shift-tab:up,tab:down' --query=${(q)q##*/}" ${=fzf} \
-        | while read -r item; do
-      echo -n "${(q)item} "
-    done)
+    return 1
   fi
+
+  fzf=$(__zic_fzf_prog)
+  matches=$(echo $l \
+      | FZF_DEFAULT_OPTS="--height=${FZF_TMUX_HEIGHT:-40%} --reverse \
+        $FZF_DEFAULT_OPTS $FZF_COMPLETION_OPTS $FZF_INTERACTIVE_CD_OPTS \
+        --bind 'shift-tab:up,tab:down' --query=${(q)q##*/}" ${=fzf} \
+      | while read -r item; do
+    echo -n "${(q)item} "
+  done)
 
   matches=${matches% }
   if [ -n "$matches" ]; then
@@ -92,7 +92,7 @@ zic-completion() {
             break
           fi
         done
-        zle list-choices
+        #zle list-choices
         zle -R 
       else
         zle ${__zic_default_completion:-expand-or-complete}

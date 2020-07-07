@@ -1,4 +1,10 @@
-# aliases.plugin.zsh: just a bunch of shell aliases
+# zshaliases.plugin.zsh: Define aliases for an interactive shell
+
+# If this is not an interactive shell, abort.
+case $- in
+  (*i*) ;;
+    (*) return ;;
+esac
 
 # default command options
 alias cp='cp -iv'
@@ -9,23 +15,26 @@ alias fgrep='fgrep --color=auto'
 alias gdb='gdb -q'
 alias grep='grep --color=auto'
 alias ip='ip -c'
-alias ls='ls -CFHhv --group-directories-first --color=auto'
+alias ls='ls -CFhv --group-directories-first --color=auto'
 alias mkdir='mkdir -pv'
 alias mv='mv -iv'
 alias nvim='nvim -p'
 alias rm='rm -Iv'
 alias rmdir='rmdir -v'
-alias tree='tree -CFlv --dirsfirst --ignore-case --matchdirs -I "(${(j.|.)=${(@f)$(< {"${HOME}/.config/git/ignore","${GIT_DIR}"/info/exclude,.gitignore}(-.N) < /dev/null)}[@]/%\/\*#/})"  --filelimit "$(( ${LINES:-$(tput lines)} ))"'
-
 alias vdir='vdir --color=auto'
 alias vim='vim -p'
 alias nvim='nvim -p'
-
+function tree() {
+  emulate -LR zsh
+  local exclude=("${(@f)$(< {~/.config/git/,.git}ignore(-.N) < /dev/null)}")
+  local options=(-C -F -l -v --matchdirs -I "(${(j:|:)exclude[@]%\/##\*#})")
+  command tree "${options[@]}" "$@"
+}
 # expand aliases
 alias sudo='sudo '
 
 # clear
-alias clr='clear'
+alias c='clear'
 
 # vim
 alias v='vim'
@@ -37,7 +46,7 @@ alias po='popd'
 alias pu='pushd'
 
 # jobs
-alias j='jobs -p'
+alias j='jobs -lp'
 
 # ls
 alias l='ls'
@@ -50,8 +59,11 @@ alias lat='ls -1Acrt'
 alias dls='ls -dl'
 
 # ps
-alias p='ps -o user,pid,ppid,pgid,tname,stat,cmd'
-alias psu='ps -u "${USERNAME:-${USER:-${LOGNAME:-$(id -n -u)}}}"'
+alias p='ps c w -fj' 
+alias pa='ps w -afj'
+alias pe='ps w -efj'
+alias psat='ps w -afj -t "${TTY:-$(tty)}"'
+alias pset='ps w -efj -t "${TTY:-$(tty)}"'
 
 # python
 alias py='python'
@@ -81,16 +93,17 @@ if command -v tmux > /dev/null; then
   alias tat='tmux attach-session -t'
   function tnsw() {
     emulate -L zsh
-    local name="$1"
-    if test -n "$1"; then
+    local -a fzf=("${(z)$(__fzfcmd):-fzf}")
+    local -Tx FZF_DEFAULT_OPTS fzf_default_opts " "
+    fzf_default_opts=(--cycle --height='15%' "${fzf_default_opts[@]}" -1)
+    if [[ -n "$1" ]]; then
       tmux new -d -t "$1" ";" new-window ";" attach
-    else
-      name="$(tmux has-session &&
-        tmux list-sessions -F "#{session_group}" | sort -u |
-        FZF_DEFAULT_OPTS="--cycle --height=15% $FZF_DEFAULT_OPTS" $(__fzfcmd) -1)"
-      if test -n "${name}"; then
-        tmux new -d -t "${name}" ";" new-window ";" attach
-      fi
+    elif tmux has-session; then
+      function () {
+        if [[ -n "$1" ]]; then
+          tmux new -d -t "$1" ";" new-window ";" attach
+        fi
+      } "$(tmux list-sessions -F "#{session_group}" | sort -u | "${fzf[@]}")"
     fi
   }
 fi
