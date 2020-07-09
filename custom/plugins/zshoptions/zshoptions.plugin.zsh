@@ -1,6 +1,6 @@
 # zshoptions.plugin.zsh: Configure preferred options for an interactive shell
 
- If this is not an interactive shell, abort.
+# If this is not an interactive shell, abort.
 case $- in
   (*i*) ;;
     (*) return ;;
