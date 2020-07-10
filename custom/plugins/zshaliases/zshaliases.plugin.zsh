@@ -30,20 +30,24 @@ function tree() {
   local options=(-C -F -l -v --matchdirs -I "(${(j:|:)exclude[@]%\/##\*#})")
   command tree "${options[@]}" "$@"
 }
-# expand aliases
+
+# expand aliases preceeded by the following words
 alias sudo='sudo '
+alias run-help='run-help '
+
+# run 'help'
+alias help='run-help'
 
 # clear
 alias c='clear'
-
-# vim
-alias v='vim'
-alias n='nvim'
 
 # dirstack
 alias ds='dirs'
 alias po='popd'
 alias pu='pushd'
+
+# help
+alias h='help'
 
 # jobs
 alias j='jobs -lp'
@@ -58,6 +62,16 @@ alias lt='ls -1crt'
 alias lat='ls -1Acrt'
 alias dls='ls -dl'
 
+# man
+alias m
+alias m='man'
+alias mw='man --wildcard'
+alias mx='man --regex'
+alias mk='man --apropos'
+alias mkw='man --apropos --wildcard'
+alias mf='man --whatis'
+alias mfx='man --whatis --regex'
+
 # ps
 alias p='ps c w -fj' 
 alias pa='ps w -afj'
@@ -70,6 +84,10 @@ alias py='python'
 alias py3='python3'
 alias py2='python2'
 alias python='python3'
+
+# vim
+alias v='vim'
+alias n='nvim'
 
 # thefuck
 if command -v fuck > /dev/null; then
