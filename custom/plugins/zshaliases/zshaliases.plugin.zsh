@@ -31,9 +31,8 @@ function tree() {
   command tree "${options[@]}" "$@"
 }
 
-# expand aliases preceeded by the following words
+# expand aliases following sudo
 alias sudo='sudo '
-alias run-help='run-help '
 
 # run 'help'
 alias help='run-help'
