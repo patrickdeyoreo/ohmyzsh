@@ -6,13 +6,6 @@ if zmodload zsh/terminfo; then
   }
 fi
 
-function __keep_exit_status() {
-  function () {
-    "${@:2}"
-    return "$1"
-  } "$?" "$@"
-}
-
 typeset -AH fg bg
 function () {
   emulate -LR zsh
@@ -25,7 +18,7 @@ function () {
   print -v 'bg[-1]' -f '%b' '\e[49m'
 } "$(( $(tput colors) ))"
 
-function shrink_path() {
+function __shrink_path() {
   function () {
     emulate -LR zsh
     local IFS='/'
@@ -81,38 +74,29 @@ ZSH_THEME_VIRTUALENV_SUFFIX=''
 
 function () {
   emulate -LR zsh
-  setopt promptbang promptpercent promptsubst noincappendhistory
-  local -A color=(
-    on  '${fg[${$(( ($? - 1) % 240 + ($? != 0) ))}]}'
-    off "${fg[-1]}${bg[-1]}"
-  )
-  PROMPT='%{'"${color[on]}"'%}╒(%{'"${color[off]}"'%}%7F%B%n%f%b%{'"${color[on]}"'%})${PROMPT_SEP}(%{'"${color[off]}"'%}%5F%B%m%f%b%{'"${color[on]}"'%})${PROMPT_SEP}(%{'"${color[off]}"'%}%6F%B$(shrink_path)%f%b%{'"${color[on]}"'%})${PROMPT_SEP}(%{'"${color[off]}"'%}%2F%B%y%f%b%{'"${color[on]}"'%})%{'"${color[off]}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
-%{'"${color[on]}"'%}╘(%{'"${color[off]}"'%}%(?.%(!.%7F%B#%f%b.%7F%Bﬦ%f%b).%7F%B%?%f%b)%{'"${color[on]}"'%})%{'"${color[off]}"'%} '
+  local status_color='${fg[${$(( ($? - 1) % 240 + ($? != 0) ))}]}'
+  local normal_color='${fg[-1]}${bg[-1]}'
+  PROMPT='%{'"${status_color}"'%}╒(%{'"${normal_color}"'%}%7F%B%n%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%5F%B%m%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%6F%B$(__shrink_path)%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%2F%B%y%f%b%{'"${status_color}"'%})%{'"${normal_color}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
+%{'"${status_color}"'%}╘(%{'"${normal_color}"'%}%(?.%(!.%7F%B#%f%b.%7F%Bﬦ%f%b).%7F%B%?%f%b)%{'"${status_color}"'%})%{'"${normal_color}"'%} '
   ZSH_THEME_GIT_PROMPT_PREFIX='
-%{'"${color[on]}"'%}╞(%{'"${color[off]}"'%}%7F%Bgit%f%b%{'"${color[on]}"'%})${PROMPT_SEP}(%{'"${color[off]}"'%}%5F%B'
-  ZSH_THEME_GIT_PROMPT_SUFFIX='%{'"${color[on]}"'%})%{'"${color[off]}"'%}'
-  ZSH_THEME_GIT_PROMPT_CLEAN='%f%b%{'"${color[on]}"'%}'
-  ZSH_THEME_GIT_PROMPT_DIRTY='%f%b%{'"${color[on]}"'%})${PROMPT_SEP}(%{'"${color[off]}"'%}${ZSH_THEME_GIT_PROMPT_DIRTY_ICON}'
-  ZSH_THEME_GIT_PROMPT_CLEAN_ICON='%B%6F%f%b' # ﭾ  
-  ZSH_THEME_GIT_PROMPT_DIRTY_ICON='%B%1F%f%b' # ﮊ ﮏ 
+%{'"${status_color}"'%}╞(%{'"${normal_color}"'%}%7F%Bgit%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%5F%B'
+  ZSH_THEME_GIT_PROMPT_SUFFIX='%{'"${status_color}"'%})%{'"${normal_color}"'%}'
+  ZSH_THEME_GIT_PROMPT_CLEAN='%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}${ZSH_THEME_GIT_PROMPT_CLEAN_ICON}'
+  ZSH_THEME_GIT_PROMPT_DIRTY='%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}${ZSH_THEME_GIT_PROMPT_DIRTY_ICON}'
+  ZSH_THEME_GIT_PROMPT_CLEAN_ICON='%B%6F%f%b'
+  ZSH_THEME_GIT_PROMPT_DIRTY_ICON='%B%1F%f%b'
   ZSH_THEME_VIRTUALENV_PREFIX='
-%{'"${color[on]}"'%}╞(%{'"${color[off]}"'%}%7F%Benv%f%b%{'"${color[on]}"'%})${PROMPT_SEP}(%{'"${color[off]}"'%}%5F%B'
-  ZSH_THEME_VIRTUALENV_SUFFIX='%f%b%{'"${color[on]}"'%})${PROMPT_SEP}(%{'"${color[off]}"'%}%6F%B$(shrink_path "$VIRTUAL_ENV:h")%f%b%{'"${color[on]}"'%})${PROMPT_SEP}(%{'"${color[off]}"'%}%2F%B$(__virtualenv_version_info)%f%b%{'"${color[on]}"'%})%{'"${color[off]}"'%}'
+%{'"${status_color}"'%}╞(%{'"${normal_color}"'%}%7F%Benv%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%5F%B'
+  ZSH_THEME_VIRTUALENV_SUFFIX='%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%6F%B$(__shrink_path "${VIRTUAL_ENV:h}")%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%2F%B$(__virtualenv_version_info)%f%b%{'"${status_color}"'%})%{'"${normal_color}"'%}'
 }
 
 function __virtualenv_prompt_fix() {
   emulate -LR zsh
-  setopt extendedglob
-  if (( ${+VIRTUAL_ENV} )); then
-    typeset -g PROMPT="${PROMPT## #\( #${VIRTUAL_ENV:t} #\) #}"
+  if [[ -n ${VIRTUAL_ENV} ]]; then
+    typeset -g PROMPT="${PROMPT##[[:blank:]]#[([][[:blank:]]#${VIRTUAL_ENV:t}[[:blank:]]#[])][[:blank:]]#}"
   fi
 }
 precmd_functions+=(__virtualenv_prompt_fix)
-
-function sgr0() {
-  tput sgr0
-}
-preexec_functions+=(sgr0)
 
 # ╒╤═╤╤╕
 # ╞╧╡╞╧╛
