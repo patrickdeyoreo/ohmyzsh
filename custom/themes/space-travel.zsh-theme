@@ -86,18 +86,18 @@ function () {
   local normal_color='${fg[reset]}${bg[reset]}'
   local italic_start="$(tput sitm 2> /dev/null)"
   local italic_reset="$(tput ritm 2> /dev/null)"
-  typeset -g PROMPT='%{'"${italic_reset}${status_color}"'%}╒(%{'"${normal_color}${italic_start}"'%}%7F%B%n%f%b%{'"${italic_reset}${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}${italic_start}"'%}%5F%B%m%f%b%{'"${italic_reset}${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}${italic_start}"'%}%6F%B$(__shrink_path)%f%b%{'"${italic_reset}${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}${italic_start}"'%}%2F%B%y%f%b%{'"${italic_reset}${status_color}"'%})%{'"${normal_color}${italic_start}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
-%{'"${italic_reset}${status_color}"'%}╘(%{'"${normal_color}${italic_start}"'%}%(?.%(!.%7F%B#%f%b.%7F%Bﬦ%f%b).%7F%B%?%f%b)%{'"${italic_reset}${status_color}"'%})%{'"${normal_color}"'%} '
+  typeset -g PROMPT='%{'"${status_color}"'%}╒(%{'"${normal_color}"'%}%7F%B%n%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%5F%B%m%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%6F%B$(__shrink_path)%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%4F%B%y%f%b%{'"${status_color}"'%})%{'"${normal_color}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
+%{'"${status_color}"'%}╘(%{'"${normal_color}"'%}%(?.%(!.%7F%B#%f%b.%7F%Bﬦ%f%b).%7F%B%?%f%b)%{'"${status_color}"'%})%{'"${normal_color}"'%} '
   typeset -g ZSH_THEME_GIT_PROMPT_PREFIX='
-%{'"${italic_reset}${status_color}"'%}╞(%{'"${normal_color}${italic_start}"'%}%7F%Bgit%f%b%{'"${italic_reset}${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}${italic_start}"'%}%5F%B'
-  typeset -g ZSH_THEME_GIT_PROMPT_SUFFIX='%{'"${italic_reset}${status_color}"'%})%{'"${normal_color}${italic_start}"'%}'
-  typeset -g ZSH_THEME_GIT_PROMPT_CLEAN='%f%b%{'"${italic_reset}${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}${italic_start}"'%}${ZSH_THEME_GIT_PROMPT_CLEAN_ICON}'
-  typeset -g ZSH_THEME_GIT_PROMPT_DIRTY='%f%b%{'"${italic_reset}${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}${italic_start}"'%}${ZSH_THEME_GIT_PROMPT_DIRTY_ICON}'
+%{'"${status_color}"'%}╞(%{'"${normal_color}"'%}%7F%Bgit%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%5F%B'
+  typeset -g ZSH_THEME_GIT_PROMPT_SUFFIX='%{'"${status_color}"'%})%{'"${normal_color}"'%}'
+  typeset -g ZSH_THEME_GIT_PROMPT_CLEAN='%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}${ZSH_THEME_GIT_PROMPT_CLEAN_ICON}'
+  typeset -g ZSH_THEME_GIT_PROMPT_DIRTY='%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}${ZSH_THEME_GIT_PROMPT_DIRTY_ICON}'
   typeset -g ZSH_THEME_GIT_PROMPT_CLEAN_ICON='%B%6F%f%b'
   typeset -g ZSH_THEME_GIT_PROMPT_DIRTY_ICON='%B%1F%f%b'
   typeset -g ZSH_THEME_VIRTUALENV_PREFIX='
-%{'"${italic_reset}${status_color}"'%}╞(%{'"${normal_color}${italic_start}"'%}%7F%Benv%f%b%{'"${italic_reset}${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}${italic_start}"'%}%5F%B'
-  typeset -g ZSH_THEME_VIRTUALENV_SUFFIX='%f%b%{'"${italic_reset}${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}${italic_start}"'%}%6F%B$(__shrink_path "${VIRTUAL_ENV:h}")%f%b%{'"${italic_reset}${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}${italic_start}"'%}%2F%B$(__virtualenv_version_info)%f%b%{'"${italic_reset}${status_color}"'%})%{'"${normal_color}${italic_start}"'%}'
+%{'"${status_color}"'%}╞(%{'"${normal_color}"'%}%7F%Benv%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%5F%B'
+  typeset -g ZSH_THEME_VIRTUALENV_SUFFIX='%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%6F%B$(__shrink_path "${VIRTUAL_ENV:h}")%f%b%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%4F%B$(__virtualenv_version_info)%f%b%{'"${status_color}"'%})%{'"${normal_color}"'%}'
 }
 
 # ╒╤═╤╤╕
