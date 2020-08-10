@@ -1,4 +1,6 @@
 # zshaliases.plugin.zsh: Define aliases for an interactive shell
+#
+# vi:ft=zsh:et:sts=2:sw=2:tw=0
 
 # If this is not an interactive shell, abort.
 case $- in
@@ -191,4 +193,12 @@ if command -v youtube-dl > /dev/null; then
   alias ytdla="youtube-dl ${YTDLA_OPTS}"
 fi
 
-# set ft=zsh:et:sts=2:sw=2:ts=8:tw=0
+function hexify () {
+  function () {
+    local FD
+    local REPLY
+    while read -k 1 -r -u "${FD}"; do
+      printf '0x%04x %s\n' "'${REPLY}" "${REPLY:/[^[:graph:]]/${(qqqq)REPLY}}"
+    done
+  } {FD} < ${1-=(cat)}
+}
