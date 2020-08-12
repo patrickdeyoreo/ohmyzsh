@@ -87,18 +87,18 @@ function () {
   emulate -LR zsh
   local status_color='${fg[${$(( ($?) ? $? % 6 + 8: -1 ))}]}'
   local normal_color='${fg[reset]}${bg[reset]}'
-  typeset -g PROMPT='%{'"${status_color}"'%}╒(%{'"${normal_color}"'%}%7F%n%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%5F%m%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%6F$(__shrink_path)%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%4F%y%f%{'"${status_color}"'%})%{'"${normal_color}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
-%{'"${status_color}"'%}╘(%{'"${normal_color}"'%}%(?.%(!.%7F#%f.%7F${PROMPT_CHR}%f).%7F%?%f)%{'"${status_color}"'%})%{'"${normal_color}"'%} '
+  typeset -g PROMPT='%{'"${status_color}"'%}╒(%{'"${normal_color}"'%}%15F%n%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%13F%m%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%14F$(__shrink_path)%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%12F%y%f%{'"${status_color}"'%})%{'"${normal_color}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
+%{'"${status_color}"'%}╘(%{'"${normal_color}"'%}%(?.%(!.%15F#%f.%15F${PROMPT_CHR}%f).%15F%?%f)%{'"${status_color}"'%})%{'"${normal_color}"'%} '
   typeset -g ZSH_THEME_GIT_PROMPT_PREFIX='
-%{'"${status_color}"'%}╞(%{'"${normal_color}"'%}%7Fgit%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%5F'
+%{'"${status_color}"'%}╞(%{'"${normal_color}"'%}%15Fgit%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%13F'
   typeset -g ZSH_THEME_GIT_PROMPT_SUFFIX='%{'"${status_color}"'%})%{'"${normal_color}"'%}'
   typeset -g ZSH_THEME_GIT_PROMPT_CLEAN='%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}${ZSH_THEME_GIT_PROMPT_CLEAN_ICON}'
   typeset -g ZSH_THEME_GIT_PROMPT_DIRTY='%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}${ZSH_THEME_GIT_PROMPT_DIRTY_ICON}'
-  typeset -g ZSH_THEME_GIT_PROMPT_CLEAN_ICON='%6F%f'
+  typeset -g ZSH_THEME_GIT_PROMPT_CLEAN_ICON='%14F%f'
   typeset -g ZSH_THEME_GIT_PROMPT_DIRTY_ICON='%1F%f'
   typeset -g ZSH_THEME_VIRTUALENV_PREFIX='
-%{'"${status_color}"'%}╞(%{'"${normal_color}"'%}%7Fenv%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%5F'
-  typeset -g ZSH_THEME_VIRTUALENV_SUFFIX='%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%6F$(__shrink_path "${VIRTUAL_ENV:h}")%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%4F$(__virtualenv_version_info)%f%{'"${status_color}"'%})%{'"${normal_color}"'%}'
+%{'"${status_color}"'%}╞(%{'"${normal_color}"'%}%15Fenv%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%13F'
+  typeset -g ZSH_THEME_VIRTUALENV_SUFFIX='%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%14F$(__shrink_path "${VIRTUAL_ENV:h}")%f%{'"${status_color}"'%})${PROMPT_SEP}(%{'"${normal_color}"'%}%12F$(__virtualenv_version_info)%f%{'"${status_color}"'%})%{'"${normal_color}"'%}'
 }
 
 # ╒╤═╤╤╕

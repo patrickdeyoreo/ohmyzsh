@@ -1,6 +1,6 @@
 # zshaliases.plugin.zsh: Define aliases for an interactive shell
 #
-# vi:ft=zsh:et:sts=2:sw=2:tw=0
+# vim : set et ft=zsh sts=2 sw=2 tw=0 :
 
 # If this is not an interactive shell, abort.
 case $- in
@@ -193,12 +193,68 @@ if command -v youtube-dl > /dev/null; then
   alias ytdla="youtube-dl ${YTDLA_OPTS}"
 fi
 
+# print the UTF-8 value of each character in hexadecimal
 function hexify () {
-  function () {
-    local FD
-    local REPLY
-    while read -k 1 -r -u "${FD}"; do
-      printf '0x%04x %s\n' "'${REPLY}" "${REPLY:/[^[:graph:]]/${(qqqq)REPLY}}"
-    done
-  } {FD} < ${1-=(cat)}
+
+  emulate -LR zsh
+
+  local OPTARG
+  local OPTIND=1
+  local optmsg='[-c] [-s SEPARATOR] [STRING]'
+  local optstr='1ch'
+  local -A opt=( )
+  local str
+  local chr
+  local fmt='%04x'
+
+  while getopts ":${optstr}" 'opt[?]'; do
+    case "${opt[?]}" in
+      ('h')
+        >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
+        return 2
+        ;;
+      (':')
+        >&2 print -f '%s: -%s: option requires an argument\n' -- "$0" "${OPTARG}"
+        >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
+        return 1
+        ;;
+      ('?')
+        >&2 print -f '%s: -%s: unrecognizd option\n' -- "$0" "${OPTARG}"
+        >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
+        return 1
+        ;;
+    esac
+    opt[${opt[?]}]=${OPTARG}
+    unset 'opt[?]'
+  done 
+  shift "$(( OPTIND - 1 ))"
+  if (( $# > 1 )); then
+    >&2 print -f '%s: too many arguments\n' -- "$0"
+    >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
+    return 1
+  fi
+  str=${1-$(cat)}
+  for chr in "${(s::)str}"; do
+    print -f "${fmt} " -- "'${chr}"
+    if (( ${+opt[1]} )); then
+      if (( ${+opt[c]} )); then
+        print -f '%s' -- "${chr:/[^[:graph:]]/${(qqqq)chr}}"
+      fi
+      echo
+    fi
+  done
+  if (( ! ${+opt[1]} )); then
+    echo
+    if (( ${+opt[c]} )); then
+      for chr in "${(s::)str}"; do
+        print -f "%-$(( ${#fmt} + 1 ))s" -- "${chr}"
+      done
+      echo
+    fi
+  fi
+}
+
+# print the number of arguments supplied
+function nargs() {
+  echo "$#"
 }
