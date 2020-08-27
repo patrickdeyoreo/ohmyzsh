@@ -65,7 +65,9 @@ _zic_complete() {
     LBUFFER="${LBUFFER}${matches}/"
   fi
   zle redisplay
-  typeset -f zle-line-init >/dev/null && zle zle-line-init
+  if typeset -f zle-line-init >/dev/null; then
+    zle zle-line-init
+  fi
   return 0
 }
 
