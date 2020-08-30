@@ -3,63 +3,64 @@
 
 
 # find files with fzf and ripgrep
-function fzrg() {
+function fzg() {
 
   emulate -LR zsh
 
-  local IFS=$' \t\n'
-  local -a rg
-  local -a fzf
-  local -a preview
   local -xT FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS}" fzf_default_opts ' '
   local -xT FZF_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}" fzf_default_command ' '
-
-  if ! (( $# )); then
-    >&2 print -f 'usage: %s PATTERN [PATH ...]\n' "$0"
-    return 2
-  fi 
-  rg=(rg --color=never --no-column --no-heading --hidden --no-line-number)
-  if (( ${+TMUX_PANE} && $(( FZF_TMUX )) && $(( ${LINES:-40} )) > 20 )); then
-    fzf=(fzf-tmux -d "${FZF_TMUX_HEIGHT:-40%}")
-  else
-    fzf=(fzf)
-  fi
-  fzf+=(
+  local -a rg=(
+    rg --color=never --no-column --no-heading --hidden --no-line-number
+  )
+  local -a fzf=(
+    fzf
     --bind="change:reload:${${(q)rg[@]}[*]} --files-with-matches -- {q} ${2+${(q)@:2}}"
     --query="${1:+${(q)1}}"
     --phony
   )
+  local -a preview=(
+    cat -b
+  )
+  local IFS=$' \t\n'
+
+  if ! (( $# )); then
+    >&2 print -f 'usage: %s SEARCH [PATH ...]\n' -- "$0"
+    return 2
+  fi 
+
+  if (( ${+tmux_pane} && ${fzf_tmux-0} && ${lines:-40} > 20 )); then
+    fzf[1,1]=(fzf-tmux -d "${fzf_tmux_height:-42%}" "${fzf[@]}")
+  fi
+
   if command -v bat; then
     preview=(bat --color='always' --paging='never' --style='numbers')
-  elif command -v highlight; then
-    preview=(highlight --force --line-numbers --wrap-no-numbers --style='golden')
-    if [[ "${TERM}" == (*-direct|allacrity|linux|st|tmux|xterm)(|-*) ]]; then
-      preview+=(-out-format='truecolor')
-    elif [[ "${TERM}" == *-256color(|-*) ]]; then
-      preview+=(--out-format='xterm256')
-    fi
-  else
-    preview=(cat -b)
+  elif command -v highlight && [[ ${TERM} == (*-direct|allacrity|linux|st|tmux|xterm)(|-*) ]]; then
+    preview=(highlight --force --line-numbers --wrap-no-numbers --out-format='truecolor')
+  elif command -v highlight && [[ ${TERM} == *-256color(|-*) ]]; then
+    preview=(highlight --force --line-numbers --wrap-no-numbers --out-format='xterm256')
   fi > /dev/null
-  fzf+=(--preview="{
-  ${${(q)preview[@]}[*]} -- {} |
-  ${${(q)rg[@]}[*]} --color=always --passthru -- {q} ||
-  ${${(q)rg[@]}[*]} --color=always --passthru -- {q} {}
-} 2> /dev/null")
+
+  fzf+=(--preview="
+  { ${${(q)preview[@]}[*]} -- {} |
+    ${${(q)rg[@]}[*]} --color=always --passthru -- {q} ||
+    ${${(q)rg[@]}[*]} --color=always --passthru -- {q} {}
+  } 2> /dev/null")
+
   fzf_default_opts+=(
-    --bind="'"'insert:replace-query'"'"
-    --bind="'"'ctrl-\:print-query'"'"
-    --bind="'"'ctrl-b:page-up'"'"
-    --bind="'"'ctrl-f:page-down'"'"
     --bind="'"'ctrl-j:replace-query+print-query'"'"
     --bind="'"'ctrl-k:kill-line'"'"
-    --bind="'"'ctrl-o:execute-silent(printf %s {} | xclip -selection clipboard)'"'"
     --bind="'"'ctrl-c:abort'"'"
+    --bind="'"'ctrl-x:execute-silent%rifle -- {}%'"'"
+    --bind="'"'alt-x:execute-silent%tmux new-window ranger --selectfile={}%'"'"
     --border="'"'sharp'"'"
-    --preview-window="'"'top:62%'"'"
+    --preview-window="'"'top:54%'"'"
     --layout="'"'reverse-list'"'"
   )
-  fzf_default_command=("${(q)rg[@]}" '--files-with-matches' '--' "${(q)@}")
+
+  fzf_default_command=(
+    "${(q)rg[@]}" '--files-with-matches' '--' "${(q)@}"
+  )
+
   "${fzf[@]}"
 }
 
@@ -69,16 +70,16 @@ function fzkill() {
 
   emulate -LR zsh
 
-  local IFS=$' \t\n'
-  local OPTARG
-  local OPTIND=1
+  local -x 
+  local -xT FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS}" fzf_default_opts ' '
+  local -xT FZF_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}" fzf_default_command ' '
   local -a fzf
   local -a ps
   local -a pids
   local -a reply
-  local -x PS_FORMAT="${PS_FORMAT:-}"
-  local -xT FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS}" fzf_default_opts ' '
-  local -xT FZF_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}" fzf_default_command ' '
+  local OPTIND=1
+  local OPTARG
+  local IFS=$' \t\n'
 
   while getopts ':s:n:l:h' _; do
     case "${opt}" in
@@ -96,16 +97,16 @@ function fzkill() {
   done
   if (( UID )); then
     ps=(
-      ps -u "${USER:$(id -nu)}" -w -w --no-headers
+      PS_FORMAT="${PS_FORMAT:-}" ps -u "${USER:$(id -nu)}" -w -w --no-headers
       -o 'pid,ppid,sid,tname,stat,user,command'
     )
   else
     ps=(
-      ps -e -w -w --no-headers
+      PS_FORMAT="${PS_FORMAT:-}" ps -e -w -w --no-headers
       -o 'pid,ppid,sid,tname,stat,user,command'
     )
   fi
-  if (( ${+TMUX_PANE} && $(( FZF_TMUX )) && $(( ${LINES:-40} )) > 15 )); then
+  if (( ${+tmux_pane} && ${fzf_tmux-0} && ${lines:-40} > 20 )); then
     fzf=(fzf-tmux -d "${FZF_TMUX_HEIGHT:-40%}")
   else
     fzf=(fzf)
@@ -134,12 +135,45 @@ function fzkill() {
   fi
 }
 
-# fzman () {
-#   if (( ${+TMUX_PANE} && $(( FZF_TMUX )) && $(( ${LINES:-40} )) > 15 ))
-#   then
-#     local fzf=(fzf-tmux -d "${FZF_TMUX_HEIGHT:-40%}") 
-#   else
-#     local fzf=(fzf) 
-#   fi
-#   man -k "$@" | "${fzf[@]}" --border=horizontal --preview-window=bottom --preview='unbuffer sh -c "man {1} | vimpager --force-passthrough --cmd \"set ft=man\" --cmd \"set tw=$((FZF_PREVIEW_COLUMNS))\" -c \"colorscheme squidink\""'
-# }
+fzman () {
+
+  emulate -LR zsh
+
+  local -xT FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS}" fzf_default_opts ' '
+  local -xT FZF_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}" fzf_default_command ' '
+  local -a fzf=(
+    fzf
+    --bind="change:reload:man -k -- {q}"
+    --query="${1:+${(q)1}}"
+    --phony
+    --preview='man -- {1}'
+  )
+  local selected=''
+  local IFS=$' \t\n'
+
+  if ! (( $# )); then
+    >&2 print -f 'usage: %s SEARCH\n' -- "$0"
+    return 2
+  fi 
+
+  if (( ${+tmux_pane} && ${fzf_tmux-0} && ${lines:-40} > 20 )); then
+    fzf[1,1]=(fzf-tmux -d "${fzf_tmux_height:-42%}" "${fzf[@]}")
+  fi
+
+  fzf_default_opts+=(
+    --bind="'"'ctrl-j:replace-query+print-query'"'"
+    --bind="'"'ctrl-k:kill-line'"'"
+    --bind="'"'ctrl-c:abort'"'"
+    --border="'"'sharp'"'"
+    --preview-window="'"'top:54%'"'"
+    --layout="'"'reverse-list'"'"
+  )
+
+  fzf_default_command=(
+    'man' '-k' '--' "${(q)@}"
+  )
+
+  if [[ -n "${selected::=$("${fzf[@]}")}" ]]; then
+    man -- "${selected}"
+  fi
+}

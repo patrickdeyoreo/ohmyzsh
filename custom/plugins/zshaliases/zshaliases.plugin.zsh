@@ -1,4 +1,6 @@
 # zshaliases.plugin.zsh: Define aliases for an interactive shell
+#
+# vim : set et ft=zsh sts=2 sw=2 tw=0 :
 
 # If this is not an interactive shell, abort.
 case $- in
@@ -26,33 +28,45 @@ alias vim='vim -p'
 alias nvim='nvim -p'
 function tree() {
   emulate -LR zsh
-  local exclude=("${(@f)$(< {~/.config/git/,.git}ignore(-.N) < /dev/null)}")
-  local options=(-C -F -l -v --matchdirs -I "(${(j:|:)exclude[@]%\/##\*#})")
+  local ignore_from=("${XDG_CONFIG_HOME:-${HOME}/.config}"/git/ignore(-.N) .gitignore(.N))
+  local ignore_list=("${(f)$(< "${ignore_from[@]-/dev/null}")}")
+  local options=(-CFlvI "(${(j:|:)ignore_list[@]%%(\/##\*#)#})")
+  if (( ${+TREE} )); then
+    options=("${(z)TREE}")
+  fi
   command tree "${options[@]}" "$@"
 }
 
 # expand aliases following sudo
 alias sudo='sudo '
 
-# run 'help'
-alias help='run-help'
+# help
+function help() {
+  run-help "$@"
+}
+alias help='help '
+alias h='help'
+
 
 # clear
 alias c='clear'
 
-# dirstack
-alias ds='dirs'
+
+# dirs
 alias po='popd'
 alias pu='pushd'
+alias -- -='popd'
+alias -- +='pushd'
 
-# help
-alias h='help'
 
 # jobs
 alias j='jobs -lp'
 
+
 # ls
 alias l='ls'
+alias L='ls -L'
+alias l1='ls -1'
 alias ll='ls -l'
 alias la='ls -A'
 alias lla='ls -Al'
@@ -60,6 +74,7 @@ alias lr='ls -Rt'
 alias lt='ls -1crt'
 alias lat='ls -1Acrt'
 alias dls='ls -dl'
+
 
 # man
 alias m
@@ -71,12 +86,14 @@ alias mkw='man --apropos --wildcard'
 alias mf='man --whatis'
 alias mfx='man --whatis --regex'
 
+
 # ps
 alias p='ps c w -fj' 
-alias pa='ps w -afj'
-alias pe='ps w -efj'
+alias psa='ps w -afj'
+alias pse='ps w -efj'
 alias psat='ps w -afj -t "${TTY:-$(tty)}"'
 alias pset='ps w -efj -t "${TTY:-$(tty)}"'
+
 
 # python
 alias py='python'
@@ -84,19 +101,23 @@ alias py3='python3'
 alias py2='python2'
 alias python='python3'
 
+
 # vim
 alias v='vim'
 alias n='nvim'
+
 
 # thefuck
 if command -v fuck > /dev/null; then
   alias fk='fuck'
 fi
 
+
 # htop
 if command -v htop > /dev/null; then
   alias top='htop'
 fi
+
 
 # tmux
 if command -v tmux > /dev/null; then
@@ -110,20 +131,16 @@ if command -v tmux > /dev/null; then
   alias tat='tmux attach-session -t'
   function tnsw() {
     emulate -L zsh
-    local -a fzf=("${(z)$(__fzfcmd):-fzf}")
-    local -Tx FZF_DEFAULT_OPTS fzf_default_opts " "
-    fzf_default_opts=(--cycle --height='15%' "${fzf_default_opts[@]}" -1)
-    if [[ -n "$1" ]]; then
-      tmux new -d -t "$1" ";" new-window ";" attach
-    elif tmux has-session; then
-      function () {
-        if [[ -n "$1" ]]; then
-          tmux new -d -t "$1" ";" new-window ";" attach
-        fi
-      } "$(tmux list-sessions -F "#{session_group}" | sort -u | "${fzf[@]}")"
+    local fzf=("${(z)$(__fzfcmd):-fzf}")
+    local session_group="${1-$(
+    tmux list-sessions -F "#{session_group}" | sort -u | FZF_DEFAULT_OPTS="--cycle --height=${(q)FZF_TMUX_HEIGHT:-20%} ${FZF_DEFAULT_OPTS} -1" "${fzf[@]}"
+    )}"
+    if [[ -n ${session_group} ]]; then
+      tmux new -d -t "${session_group}" \; new-window \; attach
     fi
   }
 fi
+
 
 # xclip
 if command -v xclip > /dev/null; then
@@ -159,14 +176,17 @@ if command -v xclip > /dev/null; then
     xclip -i -selection secondary'
 fi
 
+
 # feh
 if command -v feh > /dev/null; then
   alias feh-slideshow='feh --auto-zoom --image-bg black --slideshow-delay 8'
 fi
 
+
 # query DNS servers for my WAN IP
 alias wanip4='dig @resolver1.opendns.com -4 myip.opendns.com +short'
 alias wanip6='dig @resolver1.opendns.com -6 myip.opendns.com +short'
+
 
 # youtube-dl
 if command -v youtube-dl > /dev/null; then
@@ -191,4 +211,76 @@ if command -v youtube-dl > /dev/null; then
   alias ytdla="youtube-dl ${YTDLA_OPTS}"
 fi
 
-# set ft=zsh:et:sts=2:sw=2:ts=8:tw=0
+
+# print the UTF-8 value of each character in hexadecimal
+function hexify () {
+
+  emulate -LR zsh
+
+  local OPTARG
+  local OPTIND=1
+  local optmsg='[-c] [-s SEPARATOR] [STRING]'
+  local optstr='1ch'
+  local -A opt=( )
+  local str
+  local chr
+  local fmt='%04x'
+
+  while getopts ":${optstr}" 'opt[?]'; do
+    case "${opt[?]}" in
+      ('h')
+        >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
+        return 2
+        ;;
+      (':')
+        >&2 print -f '%s: -%s: option requires an argument\n' -- "$0" "${OPTARG}"
+        >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
+        return 1
+        ;;
+      ('?')
+        >&2 print -f '%s: -%s: unrecognizd option\n' -- "$0" "${OPTARG}"
+        >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
+        return 1
+        ;;
+    esac
+    opt[${opt[?]}]=${OPTARG}
+    unset 'opt[?]'
+  done 
+  shift "$(( OPTIND - 1 ))"
+  if (( $# > 1 )); then
+    >&2 print -f '%s: too many arguments\n' -- "$0"
+    >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
+    return 1
+  fi
+  if (( $# )); then
+    str="$1"
+  else
+    str="$(print -f '%s-' -- "$(cat)")"
+    str="${string%-}"
+  fi
+  str=${1-$(cat)}
+  if (( ${+opt[1]} )); then
+    for chr in "${(s::)str}"; do
+      print -f "${fmt} " -- "'${chr}"
+      if (( ${+opt[1]} )); then
+        if (( ${+opt[c]} )); then
+          print -f '%s' -- "${chr:/[^[:graph:]]/${(qqqq)chr}}"
+        fi
+        print
+      fi
+    done
+    echo
+  else
+    if (( ${+opt[c]} )); then
+      for chr in "${(s::)str}"; do
+        print -f "%-$(( ${#fmt} + 1 ))s" -- "${chr}"
+      done
+      print
+    fi
+  fi
+}
+
+# print the number of arguments supplied
+function nargs() {
+  print "$#"
+}
