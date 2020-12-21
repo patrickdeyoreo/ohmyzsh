@@ -70,7 +70,6 @@ function fzkill() {
 
   emulate -LR zsh
 
-  local -x 
   local -xT FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS}" fzf_default_opts ' '
   local -xT FZF_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}" fzf_default_command ' '
   local -a fzf
