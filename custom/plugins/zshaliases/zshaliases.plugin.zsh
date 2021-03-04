@@ -67,17 +67,27 @@ alias j='jobs -lp'
 alias l='ls'
 alias L='ls -L'
 alias l1='ls -1'
+alias L1='ls -1L'
 alias ll='ls -l'
+alias Ll='ls -Ll'
 alias la='ls -A'
+alias La='ls -AL'
 alias lla='ls -Al'
-alias lr='ls -Rt'
-alias lt='ls -1crt'
-alias lat='ls -1Acrt'
+alias Lla='ls -ALl'
+alias lr='ls -R'
+alias Lr='ls -LR'
+alias lar='ls -AR'
+alias Lar='ls -ALR'
+alias lt='ls -1t'
+alias Lt='ls -1Lt'
+alias lat='ls -1At'
+alias Lat='ls -1ALt'
+alias llat='ls -Alt'
+alias Llat='ls -ALlt'
 alias dls='ls -dl'
 
 
 # man
-alias m
 alias m='man'
 alias mw='man --wildcard'
 alias mx='man --regex'
@@ -211,74 +221,6 @@ if command -v youtube-dl > /dev/null; then
   alias ytdla="youtube-dl ${YTDLA_OPTS}"
 fi
 
-
-# print the UTF-8 value of each character in hexadecimal
-function hexify () {
-
-  emulate -LR zsh
-
-  local OPTARG
-  local OPTIND=1
-  local optmsg='[-c] [-s SEPARATOR] [STRING]'
-  local optstr='1ch'
-  local -A opt=( )
-  local str
-  local chr
-  local fmt='%04x'
-
-  while getopts ":${optstr}" 'opt[?]'; do
-    case "${opt[?]}" in
-      ('h')
-        >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
-        return 2
-        ;;
-      (':')
-        >&2 print -f '%s: -%s: option requires an argument\n' -- "$0" "${OPTARG}"
-        >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
-        return 1
-        ;;
-      ('?')
-        >&2 print -f '%s: -%s: unrecognizd option\n' -- "$0" "${OPTARG}"
-        >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
-        return 1
-        ;;
-    esac
-    opt[${opt[?]}]=${OPTARG}
-    unset 'opt[?]'
-  done 
-  shift "$(( OPTIND - 1 ))"
-  if (( $# > 1 )); then
-    >&2 print -f '%s: too many arguments\n' -- "$0"
-    >&2 print -f 'usage: %s %s\n' -- "$0" "${optmsg}"
-    return 1
-  fi
-  if (( $# )); then
-    str="$1"
-  else
-    str="$(print -f '%s-' -- "$(cat)")"
-    str="${string%-}"
-  fi
-  str=${1-$(cat)}
-  if (( ${+opt[1]} )); then
-    for chr in "${(s::)str}"; do
-      print -f "${fmt} " -- "'${chr}"
-      if (( ${+opt[1]} )); then
-        if (( ${+opt[c]} )); then
-          print -f '%s' -- "${chr:/[^[:graph:]]/${(qqqq)chr}}"
-        fi
-        print
-      fi
-    done
-    echo
-  else
-    if (( ${+opt[c]} )); then
-      for chr in "${(s::)str}"; do
-        print -f "%-$(( ${#fmt} + 1 ))s" -- "${chr}"
-      done
-      print
-    fi
-  fi
-}
 
 # print the number of arguments supplied
 function nargs() {
