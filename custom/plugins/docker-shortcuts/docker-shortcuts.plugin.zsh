@@ -3,15 +3,31 @@
 function docker-kill-all
 {
   local containers=( )
-  IFS=' \t' read -r -A containers < <(docker ps -aq)
-  (( $#containers == 0 )) || docker kill "$containers[@]" 2> /dev/null
+  local id=''
+
+  while read -r id
+  do
+    containers+=("${id}")
+  done < <(docker ps -aq)
+  if (( ${#containers[@]} ))
+  then
+    docker kill "${containers[@]}" 2> /dev/null
+  fi
 }
 
 function docker-rm-all
 {
   local containers=( )
-  IFS=' \t' read -r -A containers < <(docker ps -aq)
-  (( $#containers == 0 )) || docker rm "$containers[@]" 2> /dev/null
+  local id=''
+
+  while read -r id
+  do
+    containers+=("${id}")
+  done < <(docker ps -aq)
+  if (( ${#containers[@]} ))
+  then
+    docker rm "${containers[@]}" 2> /dev/null
+  fi
 }
 
 function docker-krm
@@ -23,6 +39,15 @@ function docker-krm
 function docker-krm-all
 {
   local containers=( )
-  IFS=' \t' read -r -A containers < <(docker ps -aq)
-  (( $#containers == 0 )) || docker-krm "$containers[@]" 2> /dev/null
+  local id=''
+
+  while read -r id
+  do
+    containers+=("${id}")
+  done < <(docker ps -aq)
+  if (( ${#containers[@]} ))
+  then
+    docker kill "${containers[@]}" > /dev/null 2>&1
+    docker rm "${containers[@]}" 2> /dev/null
+  fi
 }
