@@ -29,7 +29,7 @@ alias nvim='nvim -p'
 function tree() {
   emulate -LR zsh
   local ignore_from=("${XDG_CONFIG_HOME:-${HOME}/.config}"/git/ignore(-.N) .gitignore(.N))
-  local ignore_list=("${(f)$(< "${ignore_from[@]-/dev/null}")}")
+  local ignore_list=("${(f)$(< "${ignore_from[@]-/dev/null}")}") 2> /dev/null
   local options=(-CFlvI "(${(j:|:)ignore_list[@]%%(\/##\*#)#})")
   if (( ${+TREE} )); then
     options=("${(z)TREE}")

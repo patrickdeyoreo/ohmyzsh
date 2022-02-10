@@ -30,6 +30,7 @@ zstyle ':completion:*' old-list match
 zstyle ':completion:*' old-menu false
 zstyle ':completion:*' original true
 zstyle ':completion:*' preserve-prefix '//[^/]##/'
+#zstyle ':completion:*' rehash true
 zstyle ':completion:*' select-prompt '%S[%U%m%u]%s'
 zstyle ':completion:*' squeeze-slashes true
 zstyle ':completion:*' substitute true
@@ -48,7 +49,7 @@ zstyle ':completion:*:messages' format '%d'
 zstyle ':completion:*:options' auto-description '%d'
 zstyle ':completion:*:options' description yes
 zstyle ':completion:*:sudo:*' environ "PATH=${$(sudo -nu "${USER:-$(id -nu)}" printenv PATH):-${PATH:-$(getconf PATH)}}"
-zstyle ':completion:*:warnings' format '%B-- %F{red}%Uno matches%u%f --%b'
+zstyle ':completion:*:warnings' format '%F{white}--%f %F{red}%Uno matches%u%f %F{white}--%f'
 zstyle ':completion:*:*:*:*:processes' command 'ps cww -afj'
 zstyle ':completion:*:*:zcompile:*' ignored-patterns '*(\~|.zwc)'
 zstyle ':completion:*:*:-command-:*:commands' ignored-patterns '*\~'

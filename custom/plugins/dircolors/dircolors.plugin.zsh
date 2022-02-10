@@ -1,5 +1,4 @@
 # dircolors.plugin.zsh: Provides and and executes a function to load LS_COLORS
-# see 
 
 typeset -Tx 'LS_COLORS' 'ls_colors' ':'
 

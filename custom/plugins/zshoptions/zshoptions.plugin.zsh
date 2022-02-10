@@ -18,7 +18,6 @@ if [[ -o interactive ]]; then
   setopt cbases
   setopt cdablevars
   setopt chaselinks
-  setopt completealiases
   setopt completeinword
   setopt correct
   setopt cprecedences
@@ -68,6 +67,7 @@ if [[ -o interactive ]]; then
   unsetopt bsdecho
   unsetopt chasedots
   unsetopt combiningchars
+  unsetopt completealiases
   unsetopt continueonerror
   unsetopt correctall
   unsetopt cshjunkiehistory
