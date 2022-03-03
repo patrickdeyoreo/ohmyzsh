@@ -10,7 +10,8 @@ function _force_rehash() {
   return 1
 }
 
-zstyle ':completion:*' accept-exact-dirs true
+#zstyle ':completion:*' accept-exact '*(N)'
+#zstyle ':completion:*' accept-exact-dirs true
 zstyle ':completion:*' completer _oldlist _expand _force_rehash _complete _match _prefix _approximate _ignored _files
 zstyle ':completion:*' completions true
 zstyle ':completion:*' complete true
@@ -24,7 +25,7 @@ zstyle ':completion:*' keep-prefix true
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 zstyle ':completion:*' list-prompt '%S[%U%p%u] -- <%UTab%u> to continue --%s'
 zstyle ':completion:*' match-original both
-zstyle ':completion:*' matcher-list '' '+m:{[:lower:]}={[:upper:]}' '+m:{[:upper:]}={[:lower:]}' '+r:|[-._]=* r:|=*'
+zstyle ':completion:*' matcher-list '' '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+r:|[-._]=* l:|=* r:|=*'
 zstyle ':completion:*' menu select=2
 zstyle ':completion:*' old-list match
 zstyle ':completion:*' old-menu false
@@ -32,7 +33,7 @@ zstyle ':completion:*' original true
 zstyle ':completion:*' preserve-prefix '//[^/]##/'
 #zstyle ':completion:*' rehash true
 zstyle ':completion:*' select-prompt '%S[%U%m%u]%s'
-zstyle ':completion:*' squeeze-slashes true
+zstyle ':completion:*' squeeze-slashes false
 zstyle ':completion:*' substitute true
 zstyle ':completion:*' suffix false
 zstyle ':completion:*' use-cache true
