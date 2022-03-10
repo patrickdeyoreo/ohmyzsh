@@ -25,7 +25,7 @@ zstyle ':completion:*' keep-prefix true
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 zstyle ':completion:*' list-prompt '%S[%U%p%u] -- <%UTab%u> to continue --%s'
 zstyle ':completion:*' match-original both
-zstyle ':completion:*' matcher-list '' '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+r:|[-._]=* l:|=* r:|=*'
+zstyle ':completion:*' matcher-list '' '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+l:|=* r:|=*'
 zstyle ':completion:*' menu select=2
 zstyle ':completion:*' old-list match
 zstyle ':completion:*' old-menu false

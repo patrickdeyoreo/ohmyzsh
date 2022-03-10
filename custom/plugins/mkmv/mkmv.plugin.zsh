@@ -13,8 +13,8 @@ function mkmv
 {
   if [[ $# -gt 0 ]]
   then
-    mkdir -- "${(P)#}" && mv "${@:1:-1}"
+    mkdir -- "${(P)#}" && mv "$@"
   else
-    printf '%s: usage: %s [mv-options] directory\n' "$0" "$0"
+    printf '%s: usage: %s [mv-options] sources directory\n' "$0" "$0"
   fi
 }
