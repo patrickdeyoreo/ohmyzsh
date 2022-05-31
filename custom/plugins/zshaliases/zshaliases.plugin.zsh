@@ -114,7 +114,7 @@ alias python='python3'
 
 # vim
 alias v='vim'
-alias n='nvim'
+alias nv='nvim'
 
 
 # thefuck

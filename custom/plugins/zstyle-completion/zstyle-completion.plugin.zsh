@@ -1,18 +1,19 @@
 # zsh completion styles
 # see zshcompsys(1), zshmodules(1)
 
-# Rehash upon completion so programs are found immediately after installation
-function _force_rehash() {
-  emulate -LR zsh
-  if (( CURRENT == 1 )); then
-    rehash
-  fi
-  return 1
-}
+## Rehash upon completion so programs are found immediately after installation
+#function _force_rehash() {
+#  emulate -LR zsh
+#  if (( CURRENT == 1 )); then
+#    rehash
+#  fi
+#  return 1
+#}
 
 #zstyle ':completion:*' accept-exact '*(N)'
 #zstyle ':completion:*' accept-exact-dirs true
-zstyle ':completion:*' completer _oldlist _expand _force_rehash _complete _match _prefix _approximate _ignored _files
+#zstyle ':completion:*' completer _oldlist _expand _force_rehash _complete _match _prefix _approximate _ignored _files
+zstyle ':completion:*' completer _oldlist _expand _complete _match _prefix _approximate _ignored _files
 zstyle ':completion:*' completions true
 zstyle ':completion:*' complete true
 zstyle ':completion:*' condition false
