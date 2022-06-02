@@ -2,7 +2,7 @@
 # see fzf(1), rg(1)
 
 
-# find files with fzf and ripgrep
+# find files with ripgrep
 function fzg() {
 
   emulate -LR zsh
@@ -28,7 +28,7 @@ function fzg() {
     return 2
   fi 
 
-  if (( ${+tmux_pane} && ${fzf_tmux-0} && ${lines:-40} > 20 )); then
+  if (( ${+tmux_pane} && ${fzf_tmux-0} && ${LINES:-40} > 20 )); then
     fzf[1,1]=(fzf-tmux -d "${fzf_tmux_height:-42%}" "${fzf[@]}")
   fi
 
@@ -64,76 +64,7 @@ function fzg() {
   "${fzf[@]}"
 }
 
-
-# kill processes
-function fzkill() {
-
-  emulate -LR zsh
-
-  local -xT FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS}" fzf_default_opts ' '
-  local -xT FZF_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}" fzf_default_command ' '
-  local -a fzf
-  local -a ps
-  local -a pids
-  local -a reply
-  local OPTIND=1
-  local OPTARG
-  local IFS=$' \t\n'
-
-  while getopts ':s:n:l:h' _; do
-    case "${opt}" in
-      (h)
-        kill -h
-        return
-        ;;
-      (l)
-        kill -l "${OPTARG}" "${@[OPTIND,-1]}"
-        ;;
-      (:)
-        kill "${@[OPTIND,-1]}"
-        ;;
-    esac
-  done
-  if (( UID )); then
-    ps=(
-      PS_FORMAT="${PS_FORMAT:-}" ps -u "${USER:$(id -nu)}" -w -w --no-headers
-      -o 'pid,ppid,sid,tname,stat,user,command'
-    )
-  else
-    ps=(
-      PS_FORMAT="${PS_FORMAT:-}" ps -e -w -w --no-headers
-      -o 'pid,ppid,sid,tname,stat,user,command'
-    )
-  fi
-  if (( ${+tmux_pane} && ${fzf_tmux-0} && ${lines:-40} > 20 )); then
-    fzf=(fzf-tmux -d "${FZF_TMUX_HEIGHT:-40%}")
-  else
-    fzf=(fzf)
-  fi
-  fzf_default_command=(
-    "${(q)ps[@]}"
-  )
-  fzf_default_opts+=(
-    --layout='reverse-list'
-  )
-  fzf+=(
-    --multi
-    --bind='change:reload:'"${FZF_DEFAULT_COMMAND}"
-    --bind='ctrl-c:abort'
-    --query="${argv[OPTIND,-1]}"
-    --sort
-  )
-  while read -r -A reply; do
-    pids+=("$((reply[1]))") 2> /dev/null
-  done < <("${fzf[@]}")
-
-  if (( ${#pids[@]} )); then
-    set -- "${@[1,OPTIND-1]}" "${pids[@]}"
-    print -f 'kill %s\n' "${${(q)@}[*]}"
-    kill "$@"
-  fi
-}
-
+# find man pages
 fzman () {
 
   emulate -LR zsh
@@ -155,8 +86,8 @@ fzman () {
     return 2
   fi 
 
-  if (( ${+tmux_pane} && ${fzf_tmux-0} && ${lines:-40} > 20 )); then
-    fzf[1,1]=(fzf-tmux -d "${fzf_tmux_height:-42%}" "${fzf[@]}")
+  if (( ${+tmux_pane} && ${fzf_tmux-0} && ${LINES:-40} > 20 )); then
+    fzf[1,1]=(fzf-tmux -d "${fzf_tmux_height:-40%}" "${fzf[@]}")
   fi
 
   fzf_default_opts+=(
