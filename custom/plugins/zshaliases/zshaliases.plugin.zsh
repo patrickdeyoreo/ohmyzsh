@@ -109,12 +109,16 @@ alias pset='ps w -efj -t "${TTY:-$(tty)}"'
 alias py='python'
 alias py3='python3'
 alias py2='python2'
-alias python='python3'
 
 
-# vim
+# vim / neovim
 alias v='vim'
-alias nv='nvim'
+alias nvimdiff='command nvim -d'
+alias nvdiff='nvimdiff'
+if command -v nvim > /dev/null; then
+  alias vim='nvim'
+  alias vimdiff='nvimdiff'
+fi
 
 
 # thefuck
