@@ -87,7 +87,7 @@ function () {
   emulate -LR zsh
   local status_color='${fg[${$(( ($?) ? ($? - 1) % 6 + 1 : -1 ))}]}'
   local normal_color='${fg[reset]}${bg[reset]}'
-  typeset -g PROMPT='%{'"${status_color}"'%}╒[%{'"${normal_color}"'%}%15F%n%f%{'"${status_color}"'%}]${PROMPT_SEP}[%{'"${normal_color}"'%}%13F%m%f%{'"${status_color}"'%}]${PROMPT_SEP}[%{'"${normal_color}"'%}%14F$(__shrink_path)%f%{'"${status_color}"'%}]${PROMPT_SEP}[%{'"${normal_color}"'%}%12F%y%f%{'"${status_color}"'%}]%{'"${normal_color}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
+  typeset -g PROMPT='%{'"${status_color}"'%}╒[%{'"${normal_color}"'%}%15F%n%f%{'"${status_color}"'%}]${PROMPT_SEP}[%{'"${normal_color}"'%}%13F%m%f%{'"${status_color}"'%}]${PROMPT_SEP}[%{'"${normal_color}"'%}%14F$(__shrink_path)%f%{'"${status_color}"'%}]%{'"${normal_color}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
 %{'"${status_color}"'%}╘[%{'"${normal_color}"'%}%(?.%(!.%15F#%f.%15F${PROMPT_CHR}%f).%15F%?%f)%{'"${status_color}"'%}]%{'"${normal_color}"'%} '
   typeset -g ZSH_THEME_GIT_PROMPT_PREFIX='
 %{'"${status_color}"'%}╞[%{'"${normal_color}"'%}%15Fgit%f%{'"${status_color}"'%}]${PROMPT_SEP}[%{'"${normal_color}"'%}%13F'
