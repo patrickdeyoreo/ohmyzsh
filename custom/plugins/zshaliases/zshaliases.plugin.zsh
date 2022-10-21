@@ -200,6 +200,7 @@ fi
 # query DNS servers for my WAN IP
 alias wanip4='dig @resolver1.opendns.com -4 myip.opendns.com +short'
 alias wanip6='dig @resolver1.opendns.com -6 myip.opendns.com +short'
+alias wanip='wanip4'
 
 
 # youtube-dl
