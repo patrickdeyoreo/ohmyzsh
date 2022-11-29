@@ -71,7 +71,6 @@ precmd_functions+=(__virtualenv_prompt_fix)
 
 PROMPT=''
 PROMPT_SEP=':'
-PROMPT_CHR='%%'
 ZSH_THEME_GIT_PROMPT_PREFIX=''
 ZSH_THEME_GIT_PROMPT_SUFFIX=''
 ZSH_THEME_GIT_PROMPT_CLEAN=''
@@ -92,8 +91,11 @@ function () {
   local status_color='${fg[${$(( ($?) ? ($? - 1) % 6 + 1 : -1 ))}]}'
   local normal_color='${fg[reset]}${bg[reset]}'
 
+#  typeset -g PROMPT='%{'"${status_color}"'%}╭─(%{'"${normal_color}"'%}%10F%n%f%{'"${status_color}"'%}@%{'"${normal_color}"'%}%14F%m%f%{'"${status_color}"'%}${PROMPT_SEP}%{'"${normal_color}"'%}%13F$(__shrink_path)%f%{'"${status_color}"'%})%{'"${normal_color}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
+#%{'"${status_color}"'%}╰%{'"${normal_color}"'%}%(?.%(!.%15F#%f.%15F${PROMPT_CHR}%f).%{'"${status_color}"'%}${PROMPT_CHR}%{'"${normal_color}"'%} %15F%?%f %{'"${status_color}"'%}${PROMPT_CHR}%f)%{'"${normal_color}"'%} '
+
   typeset -g PROMPT='%{'"${status_color}"'%}╭─(%{'"${normal_color}"'%}%10F%n%f%{'"${status_color}"'%}@%{'"${normal_color}"'%}%14F%m%f%{'"${status_color}"'%}${PROMPT_SEP}%{'"${normal_color}"'%}%13F$(__shrink_path)%f%{'"${status_color}"'%})%{'"${normal_color}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
-%{'"${status_color}"'%}╰%{'"${normal_color}"'%}%(?.%(!.%15F#%f.%15F${PROMPT_CHR}%f).%{'"${status_color}"'%}${PROMPT_CHR}%{'"${normal_color}"'%} %15F%?%f %{'"${status_color}"'%}${PROMPT_CHR}%f)%{'"${normal_color}"'%} '
+%{'"${status_color}"'%}╰%{'"${normal_color}"'%}%(?.%15F%#%f.%{'"${status_color}"'%}%#%{'"${normal_color}"'%} %15F%?%f %{'"${status_color}"'%}%#%{'"${normal_color}"'%}) '
 
   typeset -g ZSH_THEME_GIT_PROMPT_PREFIX='
 %{'"${status_color}"'%}├─(%{'"${normal_color}"'%}%10Fgit%f%{'"${status_color}"'%}${PROMPT_SEP}%{'"${normal_color}"'%}%14F'
