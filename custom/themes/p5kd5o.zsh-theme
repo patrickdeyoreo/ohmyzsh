@@ -18,45 +18,42 @@ function () {
 } "$(( $(tput colors) ))"
 
 function __shrink_path() {
-  function () {
-    emulate -LR zsh
-    local components=("${(@)${(@s:/:)${(D)^${2:-.}:P}}//\%/%%}")
-    components[1,-2]=("${(%)${(@A):-"%2>*>${(@A)^components[1,-2]}"}[@]}")
-    print -f %s\\n -- "${(j:/:)components[@]}"
-    return "$1"
-  } "$?" "$1"
-  return "$?"
+  local retval="$?"
+  emulate -LR zsh
+  local components=("${(@)${(@s:/:)${(D)^${1:-.}:P}}//\%/%%}")
+  components[1,-2]=("${(%)${(@A):-"%2>*>${(@A)^components[1,-2]}"}[@]}")
+  print -f %s\\n -- "${(j:/:)components[@]}"
+  return "${retval}"
 }
 
 function __git_prompt_info() {
-  function () {
-    emulate -LR zsh
-    setopt promptpercent promptsubst
-    git_prompt_info
-    return "$1"
-  } "$?"
-  return "$?"
+  local retval="$?"
+  emulate -LR zsh
+  setopt promptpercent promptsubst
+  2> /dev/null git_prompt_info
+  return "${retval}"
 }
 
 function __virtualenv_prompt_info() {
-  function () {
-    emulate -LR zsh
-    setopt promptpercent promptsubst
-    virtualenv_prompt_info
-    return "$1"
-  } "$?"
-  return "$?"
+  local retval="$?"
+  emulate -LR zsh
+  setopt promptpercent promptsubst
+  2> /dev/null virtualenv_prompt_info
+  return "${retval}"
 }
 
 function __virtualenv_version_info() {
-  function () {
-    emulate -LR zsh
-    setopt extendedglob
-    local -A pyvenvcfg=(${(@f)"${(@f)$(< "${VIRTUAL_ENV}/pyvenv.cfg")}"/ #= #/$'\n'})
+  local retval="$?"
+  emulate -LR zsh
+  setopt extendedglob
+  local -A pyvenvcfg=()
+  if 2> /dev/null pyvenvcfg=(${(@f)"${(@f)$(< "${VIRTUAL_ENV}/pyvenv.cfg")}"/ #= #/$'\n'})
+  then
     print -f '%s' -- "${pyvenvcfg[version]}" $'\n'
-    return "$1"
-  } "$?"
-  return "$?"
+  else
+    print '?.?.?'
+  fi
+  return "${retval}"
 }
 
 function __virtualenv_prompt_fix() {
@@ -88,11 +85,8 @@ ZSH_THEME_VIRTUALENV_SUFFIX=''
 function () {
   emulate -LR zsh
 
-  local status_color='${fg[${$(( ($?) ? ($? - 1) % 6 + 1 : -1 ))}]}'
+  local status_color='${fg[$(( status ? (status - 1) % 6 + 1 : -1 ))]}'
   local normal_color='${fg[reset]}${bg[reset]}'
-
-#  typeset -g PROMPT='%{'"${status_color}"'%}╭─(%{'"${normal_color}"'%}%10F%n%f%{'"${status_color}"'%}@%{'"${normal_color}"'%}%14F%m%f%{'"${status_color}"'%}${PROMPT_SEP}%{'"${normal_color}"'%}%13F$(__shrink_path)%f%{'"${status_color}"'%})%{'"${normal_color}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
-#%{'"${status_color}"'%}╰%{'"${normal_color}"'%}%(?.%(!.%15F#%f.%15F${PROMPT_CHR}%f).%{'"${status_color}"'%}${PROMPT_CHR}%{'"${normal_color}"'%} %15F%?%f %{'"${status_color}"'%}${PROMPT_CHR}%f)%{'"${normal_color}"'%} '
 
   typeset -g PROMPT='%{'"${status_color}"'%}╭─(%{'"${normal_color}"'%}%10F%n%f%{'"${status_color}"'%}@%{'"${normal_color}"'%}%14F%m%f%{'"${status_color}"'%}${PROMPT_SEP}%{'"${normal_color}"'%}%13F$(__shrink_path)%f%{'"${status_color}"'%})%{'"${normal_color}"'%}${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
 %{'"${status_color}"'%}╰%{'"${normal_color}"'%}%(?.%15F%#%f.%{'"${status_color}"'%}%#%{'"${normal_color}"'%} %15F%?%f %{'"${status_color}"'%}%#%{'"${normal_color}"'%}) '
