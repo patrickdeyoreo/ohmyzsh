@@ -5,4 +5,7 @@
 *.pyc
 *.sw[op]
 .DS_Store
+
+# editor configs
 .vscode
+.idea
