@@ -13,4 +13,7 @@ tags
 .tags
 
 .DS_Store
+
+# editor configs
 .vscode
+.idea
