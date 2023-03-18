@@ -19,9 +19,9 @@ bindkey "^[[1;3A" up-history
 bindkey "^[^[[A"  up-history
 bindkey "^[[A"    up-line-or-history
 bindkey "^[OA"    up-line-or-history
-bindkey "^r"      history-incremental-pattern-search-backward
+#bindkey "^r"      history-incremental-pattern-search-backward
 bindkey "^Xr"     history-incremental-pattern-search-backward
-bindkey "^S"      history-incremental-pattern-search-forward
+#bindkey "^S"      history-incremental-pattern-search-forward
 bindkey "^Xs"     history-incremental-pattern-search-forward
 bindkey "^[[7~"   beginning-of-line                               # Home key
 bindkey "^[[H"    beginning-of-line                               # Home key
