@@ -13,7 +13,7 @@ function cdls
 {
   if (( $# ))
   then
-    cd -- "${!#}" && ls "${@:1:-1}"
+    cd -- "${(P)#}" && ls "${@:1:-1}"
   else
     cd && ls
   fi

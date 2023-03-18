@@ -1,11 +1,11 @@
 # venv.plugin.zsh
 
-# Find the nearest ancestor of the given directory has a virtual environment
-# as an immediate child. If called with no arguments, operate on the current
-# working directory. If the Upon success, the result is appended to the array `reply'
+# Find the nearest ancestor of a directory with a virtual env as a child.
+# If called with no arguments, operate on the current working directory.
+# Upon success, the result is appended to the ``reply'' array.
 function __nearest_venv_root ()
 {
-  emulate -L zsh
+  emulate -LR zsh
   setopt extendedglob globassign noglobsubst
   local REPLY
   [[ -d ${1-.} ]] || return
@@ -15,7 +15,6 @@ function __nearest_venv_root ()
 }
 
 # venv chpwd hook
-#
 function __chpwd_venv_activate ()
 {
   emulate -L zsh

@@ -1,9 +1,17 @@
-/custom/plugins/zsh-*
-/cache
-/log
+cache/
+log/
+
 *~
-*.pyc
 *.sw[op]
+
+*.py[cod]
+
+*.o
+*.so
+
+tags
+.tags
+
 .DS_Store
 
 # editor configs
