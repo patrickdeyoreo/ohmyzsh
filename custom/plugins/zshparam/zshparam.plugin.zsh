@@ -11,7 +11,7 @@ typeset -g NULLCMD="${NULLCMD:-cat}"
 typeset -g READNULLCMD="${READNULLCMD:-cat}"
 typeset -g PROMPT_EOL_MARK='%S@%s'
 typeset -g sprompt=(
-'%N:'
+'%1N:'
 '%1F'"'"'${${:-%%R}//'"'"'/'"'"''''"'""'"'}'"'"'%1f:'
 'perhaps you meant'
 '%2F'"'"'${${:-%%r}//'"'"'/'"'"''''"'""'"'}'"'"'%2f'
