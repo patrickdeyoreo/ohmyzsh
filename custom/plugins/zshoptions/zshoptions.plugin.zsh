@@ -58,7 +58,7 @@ if [[ -o interactive ]]; then
   setopt rematchpcre
   setopt rmstarsilent
   setopt sharehistory
-  setopt warncreateglobal
+  # setopt warncreateglobal
   setopt zle
   unsetopt aliasfuncdef
   unsetopt allexport

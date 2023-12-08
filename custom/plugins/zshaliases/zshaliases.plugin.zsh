@@ -106,6 +106,13 @@ alias pset='ps w -efj -t "${TTY:-$(tty)}"'
 
 
 # python
+if command -v python3 > /dev/null
+then
+  alias python='python3'
+elif command -v python2 > /dev/null
+then
+  alias python='python2'
+fi
 alias py='python'
 alias py3='python3'
 alias py2='python2'

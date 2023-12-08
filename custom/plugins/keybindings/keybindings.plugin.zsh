@@ -8,7 +8,7 @@ bindkey "^[[1;5D" backward-word
 bindkey "^[^[[D"  backward-word
 bindkey "^[[1;3C" forward-word
 bindkey "^[[1;5C" forward-word
-bindkey "^[^[[C"  backward-word
+bindkey "^[^[[C"  forward-word
 bindkey "^[[1;5A" history-beginning-search-backward
 bindkey "^[[1;5B" history-beginning-search-forward
 bindkey "^[[1;3B" down-history
