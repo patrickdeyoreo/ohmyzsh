@@ -58,7 +58,6 @@ if [[ -o interactive ]]; then
   setopt rematchpcre
   setopt rmstarsilent
   setopt sharehistory
-  # setopt warncreateglobal
   setopt zle
   unsetopt aliasfuncdef
   unsetopt allexport
@@ -181,6 +180,7 @@ if [[ -o interactive ]]; then
   unsetopt typesetsilent
   unsetopt verbose
   unsetopt vi
+  unsetopt warncreateglobal
   unsetopt warnnestedvar
   unsetopt xtrace
 fi
