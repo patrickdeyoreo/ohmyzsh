@@ -73,7 +73,7 @@ ZSH_THEME_VIRTUALENV_PREFIX=''
 ZSH_THEME_VIRTUALENV_SUFFIX=''
 
 PROMPT='%(?.%15F.%1F)╭─(%f%10F%n%f%(?.%15F.%1F)@%f%14F%m%f%(?.%15F.%1F)${PROMPT_SEP}%f%13F$(__shrink_path)%f%(?.%15F.%1F))%f${(%%)$(__virtualenv_prompt_info)}${(%%)$(__git_prompt_info)}
-%(?.%15F.%1F)╰%f%(?.%15F%#%f.%1F%#%f %15F%?%f %1F%#%f) '
+%(?.%15F.%1F)╰%f%(?.%15F%#%f.%1F>%f %15F%?%f %1F%#%f) '
 
 ZSH_THEME_GIT_PROMPT_PREFIX='
 %(?.%15F.%1F)├─(%f%10Fgit%f%(?.%15F.%1F)${PROMPT_SEP}%f%14F'

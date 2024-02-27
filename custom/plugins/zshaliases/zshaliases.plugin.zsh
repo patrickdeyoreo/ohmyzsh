@@ -23,6 +23,7 @@ alias mv='mv -iv'
 alias rm='rm -Iv'
 alias rmdir='rmdir -v'
 alias vdir='vdir --color=auto'
+alias df='df --exclude-type=tmpfs'
 
 
 # expand aliases following sudo
@@ -54,25 +55,15 @@ alias j='jobs -lp'
 
 # ls
 alias l='ls'
-alias L='ls -L'
-alias l1='ls -1'
-alias L1='ls -1L'
 alias ll='ls -l'
-alias Ll='ls -Ll'
 alias la='ls -A'
-alias La='ls -AL'
 alias lla='ls -Al'
-alias Lla='ls -ALl'
 alias lr='ls -R'
-alias Lr='ls -LR'
 alias lar='ls -AR'
-alias Lar='ls -ALR'
 alias lt='ls -1t'
-alias Lt='ls -1Lt'
 alias lat='ls -1At'
-alias Lat='ls -1ALt'
 alias llat='ls -Alt'
-alias Llat='ls -ALlt'
+alias l1='ls -1'
 alias dls='ls -dl'
 
 
