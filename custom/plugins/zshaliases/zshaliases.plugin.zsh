@@ -20,32 +20,22 @@ alias ip='ip -c'
 alias ls='ls -CFhv --color=auto'
 alias mkdir='mkdir -pv'
 alias mv='mv -iv'
-alias nvim='nvim -p'
 alias rm='rm -Iv'
 alias rmdir='rmdir -v'
 alias vdir='vdir --color=auto'
-alias vim='vim -p'
-alias nvim='nvim -p'
-function tree() {
-  emulate -LR zsh
-  local ignore_from=("${XDG_CONFIG_HOME:-${HOME}/.config}"/git/ignore(-.N) .gitignore(.N))
-  local ignore_list=("${(f)$(< "${ignore_from[@]-/dev/null}")}") 2> /dev/null
-  local options=(-CFlvI "(${(j:|:)ignore_list[@]%%(\/##\*#)#})")
-  if (( ${+TREE} )); then
-    options=("${(z)TREE}")
-  fi
-  command tree "${options[@]}" "$@"
-}
+alias df='df --exclude-type=tmpfs'
+
 
 # expand aliases following sudo
 alias sudo='sudo '
 
+
 # help
+alias h='help'
+alias help='help '
 function help() {
   run-help "$@"
 }
-alias help='help '
-alias h='help'
 
 
 # clear
@@ -65,44 +55,30 @@ alias j='jobs -lp'
 
 # ls
 alias l='ls'
-alias L='ls -L'
-alias l1='ls -1'
-alias L1='ls -1L'
 alias ll='ls -l'
-alias Ll='ls -Ll'
 alias la='ls -A'
-alias La='ls -AL'
 alias lla='ls -Al'
-alias Lla='ls -ALl'
 alias lr='ls -R'
-alias Lr='ls -LR'
 alias lar='ls -AR'
-alias Lar='ls -ALR'
 alias lt='ls -1t'
-alias Lt='ls -1Lt'
 alias lat='ls -1At'
-alias Lat='ls -1ALt'
 alias llat='ls -Alt'
-alias Llat='ls -ALlt'
+alias l1='ls -1'
 alias dls='ls -dl'
 
 
 # man
-alias m='man'
-alias mw='man --wildcard'
-alias mx='man --regex'
-alias mk='man --apropos'
-alias mkw='man --apropos --wildcard'
-alias mf='man --whatis'
-alias mfx='man --whatis --regex'
+alias aprop='man --apropos --wildcard'
+alias apropx='man --apropos --regex'
+alias what='man --whatis --wildcard'
+alias whatx='man --whatis --regex'
 
 
 # ps
-alias p='ps c w -fj' 
-alias psa='ps w -afj'
-alias pse='ps w -efj'
-alias psat='ps w -afj -t "${TTY:-$(tty)}"'
-alias pset='ps w -efj -t "${TTY:-$(tty)}"'
+alias p='ps w -fj' 
+alias pt='ps w -fj -t "${TTY:-$(tty)}"'
+alias pa='ps w -afj'
+alias pe='ps w -efj'
 
 
 # python
@@ -114,17 +90,22 @@ then
   alias python='python2'
 fi
 alias py='python'
-alias py3='python3'
 alias py2='python2'
+alias py3='python3'
 
 
 # vim / neovim
-alias v='vim'
-alias nvimdiff='command nvim -d'
-alias nvdiff='nvimdiff'
 if command -v nvim > /dev/null; then
+  alias v='vim'
   alias vim='nvim'
+  alias nvim='nvim -p'
+  alias vdiff='vimdiff'
   alias vimdiff='nvimdiff'
+  alias nvimdiff='command nvim -d'
+elif command -v vim > /dev/null; then
+  alias v='vim'
+  alias vim='vim -p'
+  alias vdiff='vimdiff'
 fi
 
 
@@ -150,16 +131,18 @@ if command -v tmux > /dev/null; then
   alias tnn='tmux new-window -n'
   alias ta='tmux attach-session'
   alias tat='tmux attach-session -t'
-  function tnsw() {
-    emulate -L zsh
-    local fzf=("${(z)$(__fzfcmd):-fzf}")
-    local session_group="${1-$(
-    tmux list-sessions -F "#{session_group}" | sort -u | FZF_DEFAULT_OPTS="--cycle --height=${(q)FZF_TMUX_HEIGHT:-20%} ${FZF_DEFAULT_OPTS} -1" "${fzf[@]}"
-    )}"
-    if [[ -n ${session_group} ]]; then
-      tmux new -d -t "${session_group}" \; new-window \; attach
-    fi
-  }
+  if command -v fzf > /dev/null; then
+    function tnsw() {
+      emulate -L zsh
+      local fzf=("${(z)$(__fzfcmd):-fzf}")
+      local session_group="${1-$(
+      tmux list-sessions -F "#{session_group}" | sort -u | FZF_DEFAULT_OPTS="--cycle --height=${(q)FZF_TMUX_HEIGHT:-20%} ${FZF_DEFAULT_OPTS} -1" "${fzf[@]}"
+      )}"
+      if [[ -n ${session_group} ]]; then
+        tmux new -d -t "${session_group}" \; new-window \; attach
+      fi
+    }
+  fi
 fi
 
 
@@ -208,6 +191,21 @@ fi
 alias wanip4='dig @resolver1.opendns.com -4 myip.opendns.com +short'
 alias wanip6='dig @resolver1.opendns.com -6 myip.opendns.com +short'
 alias wanip='wanip4'
+
+
+# tree customization
+if command -v tree > /dev/null; then
+  function tree() {
+    emulate -LR zsh
+    local ignore_from=("${XDG_CONFIG_HOME:-${HOME}/.config}"/git/ignore(-.N) .gitignore(.N))
+    local ignore_list=("${(f)$(< "${ignore_from[@]-/dev/null}")}") 2> /dev/null
+    local options=(-CFlvI "(${(j:|:)ignore_list[@]%%(\/##\*#)#})")
+    if (( ${+TREE} )); then
+      options=("${(z)TREE}")
+    fi
+    command tree "${options[@]}" "$@"
+  }
+fi
 
 
 # youtube-dl
